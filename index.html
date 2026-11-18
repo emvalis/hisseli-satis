@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hisseli Satış Hesaplama Aracı</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232a8579'/%3E%3Cstop offset='1' stop-color='%233f6fa3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M30 34V12a22 22 0 1 0 22 22z' fill='%23fff'/%3E%3Cpath d='M35 29V9a20 20 0 0 1 20 20z' fill='%23ffc857'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#2a8579">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light;
+--bg:#f4f4ef;--card:rgba(255,255,255,.8);--solid:#fff;--tx:#17222b;--mu:#667580;--br:#e2e6e1;--br2:#cfd6d2;
+--ac:#2a8579;--ac2:#3f6fa3;--acs:#e5f3f0;--acg:rgba(42,133,121,.18);
+--ok:#0e7a55;--okbg:#e2f5ec;--er:#c5352f;--erbg:#fdeceb;--chip:#edf1ee;--wa:#c98a1b;--wabg:rgba(201,138,27,.12);
+--b1:rgba(70,185,165,.26);--b2:rgba(90,130,210,.16);--b3:rgba(235,150,185,.14);
+--sh:0 1px 2px rgba(20,40,40,.04),0 10px 30px -10px rgba(20,50,50,.14);--hl:inset 0 1px 0 rgba(255,255,255,.9);--r:18px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+--bg:#09111a;--card:rgba(17,27,38,.74);--solid:#111b27;--tx:#e8eef2;--mu:#8a9aaa;--br:#1f2d3b;--br2:#2d3e50;
+--ac:#7fcabd;--ac2:#8aaed6;--acs:#122c32;--acg:rgba(127,202,189,.20);
+--ok:#6fd3a6;--okbg:#0f2a24;--er:#ff9a92;--erbg:#2e1b1f;--chip:#162331;--wa:#ebc88c;--wabg:rgba(235,200,140,.12);
+--b1:rgba(45,150,150,.24);--b2:rgba(110,140,220,.14);--b3:rgba(230,150,185,.09);
+--sh:0 1px 2px rgba(0,0,0,.4),0 14px 34px -10px rgba(0,0,0,.55);--hl:inset 0 1px 0 rgba(255,255,255,.05)}}
+:root[data-theme="dark"]{color-scheme:dark;
+--bg:#09111a;--card:rgba(17,27,38,.74);--solid:#111b27;--tx:#e8eef2;--mu:#8a9aaa;--br:#1f2d3b;--br2:#2d3e50;
+--ac:#7fcabd;--ac2:#8aaed6;--acs:#122c32;--acg:rgba(127,202,189,.20);
+--ok:#6fd3a6;--okbg:#0f2a24;--er:#ff9a92;--erbg:#2e1b1f;--chip:#162331;--wa:#ebc88c;--wabg:rgba(235,200,140,.12);
+--b1:rgba(45,150,150,.24);--b2:rgba(110,140,220,.14);--b3:rgba(230,150,185,.09);
+--sh:0 1px 2px rgba(0,0,0,.4),0 14px 34px -10px rgba(0,0,0,.55);--hl:inset 0 1px 0 rgba(255,255,255,.05)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--tx);font:15px/1.55 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color .4s,color .4s}
+body::before,body::after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(90px);pointer-events:none;will-change:transform}
+body::before{width:62vmax;height:62vmax;top:-32vmax;left:-22vmax;background:radial-gradient(circle,var(--b1),transparent 65%);animation:fl 26s ease-in-out infinite alternate}
+body::after{width:58vmax;height:58vmax;bottom:-34vmax;right:-20vmax;background:radial-gradient(circle,var(--b2),transparent 65%),radial-gradient(circle at 20% 80%,var(--b3),transparent 60%);animation:fl 32s ease-in-out infinite alternate-reverse}
+@keyframes fl{to{transform:translate(7vmax,5vmax) scale(1.12)}}
+[hidden]{display:none!important}
+::selection{background:var(--acg)}
+.top,main{max-width:1100px;margin:0 auto;padding-left:22px;padding-right:22px}
+.top{padding-top:26px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;animation:down .6s cubic-bezier(.2,.7,.2,1) both}
+main{padding-top:22px;padding-bottom:20px}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;font-size:21px;box-shadow:0 6px 18px -4px var(--acg),var(--hl);animation:pop .7s cubic-bezier(.3,1.5,.5,1) both}
+.top h1{font-size:19px;margin:0;font-weight:700;letter-spacing:-.015em}
+.top p{margin:1px 0 0;color:var(--mu);font-size:13px}
+.tools{display:flex;gap:8px;align-items:center}
+.mt{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;padding:3px;background:var(--chip);border:1px solid var(--br);border-radius:999px}
+.mt::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 4px 12px -3px var(--acg);transition:transform .38s cubic-bezier(.3,1.15,.5,1)}
+html[data-mode="a"] .mt::before{transform:translateX(100%)}
+.mt button{position:relative;z-index:1;border:0;background:transparent;color:var(--mu);padding:8px 18px;border-radius:999px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;transition:color .25s}
+.mt button[aria-pressed="true"]{color:#fff}
+.ib{width:38px;height:38px;border-radius:12px;border:1px solid var(--br);background:var(--card);color:var(--tx);font-size:16px;cursor:pointer;padding:0;transition:border-color .2s,transform .2s,background .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ib:hover{border-color:var(--ac);transform:translateY(-1px)}.ib:active{transform:scale(.92)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.card{position:relative;background:var(--card);backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--br);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:var(--sh),var(--hl);animation:up .6s cubic-bezier(.2,.7,.2,1) both;transition:background-color .4s,border-color .4s,box-shadow .3s}
+.card:nth-child(2){animation-delay:.07s}.card:nth-child(3){animation-delay:.14s}
+
+.ic.c1{--c:#2563eb;--cb:rgba(37,99,235,.14)}
+.ic.c2{--c:#9333ea;--cb:rgba(147,51,234,.14)}
+.ic.c3{--c:#059669;--cb:rgba(5,150,105,.16)}
+.ic.c4{--c:#ea580c;--cb:rgba(234,88,12,.16)}
+:root[data-theme="dark"] .ic.c1{--c:#7ab0ff;--cb:rgba(96,165,250,.18)}
+:root[data-theme="dark"] .ic.c2{--c:#d0a2ff;--cb:rgba(192,132,252,.18)}
+:root[data-theme="dark"] .ic.c3{--c:#5eead4;--cb:rgba(52,211,153,.18)}
+:root[data-theme="dark"] .ic.c4{--c:#fdba74;--cb:rgba(251,146,60,.18)}
+
+h2{font-size:15.5px;font-weight:650;margin:0 0 18px;display:flex;align-items:center;gap:11px;letter-spacing:-.01em}
+.st{width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:700;box-shadow:0 3px 10px -3px var(--acg)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+label{display:block;font-weight:600;font-size:12.5px;margin-bottom:7px;color:var(--tx);letter-spacing:.01em}
+label small{color:var(--mu);font-weight:500}
+input[type=text],input[type=number]{width:100%;padding:11px 14px;border:1px solid var(--br);border-radius:12px;background:var(--solid);color:var(--tx);font:inherit;outline:none;transition:border-color .2s,box-shadow .25s,background-color .3s}
+input::placeholder{color:var(--mu);opacity:.7}
+input:hover{border-color:var(--br2)}
+input:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--acg)}
+input.bad{border-color:var(--er);box-shadow:0 0 0 4px var(--erbg)}
+.simple input[type=text]{padding:13px 16px;font-size:16px}
+.pp{display:flex;align-items:center;gap:10px}.pp span{font-size:22px;color:var(--mu);font-weight:300}
+.kp{margin-top:18px;max-width:360px}
+.sw{margin-top:18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.tg{position:relative;display:flex;align-items:center;gap:11px;cursor:pointer;margin:0;font-size:14px}
+.tg input{position:absolute;opacity:0;width:1px;height:1px}
+.trk{width:42px;height:24px;border-radius:13px;background:var(--br2);position:relative;transition:background .3s}
+.trk::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .3s cubic-bezier(.3,1.4,.5,1);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tg input:checked+.trk{background:linear-gradient(135deg,var(--ac),var(--ac2))}.tg input:checked+.trk::after{transform:translateX(18px)}
+.tg input:focus-visible+.trk{outline:2px solid var(--ac);outline-offset:2px}
+.kv{max-width:340px;width:100%;animation:pop .3s both}
+.seg2{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;padding:3px;background:var(--chip);border:1px solid var(--br);border-radius:999px;animation:pop .3s both}
+.seg2::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:var(--ac);transition:transform .35s cubic-bezier(.3,1.15,.5,1)}
+.seg2[data-v="pay"]::before{transform:translateX(100%)}
+.seg2 button{position:relative;z-index:1;border:0;background:transparent;color:var(--mu);padding:7px 16px;border-radius:999px;font:inherit;font-weight:600;font-size:13px;cursor:pointer;transition:color .25s}
+.seg2 button.on{color:#fff}
+:root[data-theme="dark"] .seg2 button.on,:root[data-theme="dark"] .mt button[aria-pressed="true"]{color:#0b0d12}
+.cnt{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px}
+.step{display:flex;gap:6px}.step input{width:72px;text-align:center}
+.step button{width:40px;border-radius:11px;border:1px solid var(--br);background:var(--solid);color:var(--tx);font-size:18px;cursor:pointer;transition:transform .15s,border-color .2s}
+.step button:hover{border-color:var(--ac)}.step button:active{transform:scale(.88)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:18px}
+.mode{position:relative;display:flex;gap:12px;align-items:flex-start;text-align:left;padding:15px;border:1.5px solid var(--br);border-radius:14px;background:var(--solid);color:var(--tx);font:inherit;cursor:pointer;transition:border-color .25s,background .25s,transform .25s,box-shadow .25s}
+.mode:hover{border-color:var(--br2);transform:translateY(-2px);box-shadow:var(--sh)}
+.mode .mi{font-size:24px;line-height:1}.mode b{display:block;font-size:14.5px}
+.mode small{display:block;color:var(--mu);font-size:13px;line-height:1.4}
+.mode em{display:inline-block;margin-top:8px;font:600 12px ui-monospace,Menlo,monospace;font-style:normal;background:var(--chip);padding:3px 8px;border-radius:7px;color:var(--mu)}
+.mode.on{border-color:var(--ac);background:var(--acs);box-shadow:0 0 0 4px var(--acg)}
+.mode.on::after{content:"✓ Seçili";margin-left:auto;font-size:11.5px;font-weight:700;color:var(--ac);white-space:nowrap;animation:pop .3s both}
+.hint{color:var(--mu);font-size:13px;margin:0 0 4px}
+.hint.kh{background:linear-gradient(135deg,rgba(234,88,12,.10),var(--acs));border:1px solid var(--br);border-left:3px solid #ea580c;border-radius:12px;padding:11px 14px;color:var(--tx);font-size:13.5px;line-height:1.5}
+.rowhead,.row{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(0,1fr) 36px;gap:8px;align-items:center}
+.rowhead{margin-top:18px;font-size:11.5px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}
+.row{margin-top:8px}.row.new{animation:up .45s cubic-bezier(.2,.7,.2,1) both}
+.no{width:30px;height:30px;border-radius:9px;background:var(--chip);color:var(--mu);display:grid;place-items:center;font-size:12.5px;font-weight:700}
+.row.last .no{background:var(--acs);color:var(--ac)}
+.live{padding:11px 14px;border-radius:12px;background:var(--acs);color:var(--ac);font-weight:600;font-variant-numeric:tabular-nums;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px dashed var(--acg);transition:background .25s,color .25s}
+.live.bad{background:var(--erbg);color:var(--er);font-weight:500;font-size:13px;white-space:normal;border-color:transparent}
+.rm{width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--mu);font-size:20px;cursor:pointer;padding:0;transition:.2s}
+.rm:hover:not(:disabled){color:var(--er);background:var(--erbg);transform:rotate(90deg)}.rm:disabled{opacity:.25;cursor:default}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:18px}.info:empty{display:none}
+.ic{background:var(--cb,var(--acs));border-radius:12px;padding:10px 14px;border-left:3px solid var(--c,var(--ac));animation:pop .4s both}
+.ic small{display:block;color:var(--mu);font-size:11.5px}.ic b{font-size:15.5px;color:var(--c,var(--ac));font-variant-numeric:tabular-nums}
+
+.act{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.pri{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:0;border-radius:14px;padding:14px 36px;font:inherit;font-weight:650;font-size:15.5px;cursor:pointer;box-shadow:0 10px 24px -8px var(--ac),var(--hl);transition:transform .2s,box-shadow .25s;position:relative;overflow:hidden}
+:root[data-theme="dark"] .pri{color:#0b0d12}
+.pri::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-100%)}
+.pri:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px var(--ac)}.pri:hover::after{transform:translateX(100%);transition:transform .8s}
+.pri:active{transform:scale(.97)}
+.sec{background:var(--solid);color:var(--ac);border:1px solid var(--br);border-radius:12px;padding:9px 16px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;transition:.2s}
+.sec:hover{border-color:var(--ac);transform:translateY(-1px);background:var(--acs)}.sec:active{transform:scale(.96)}
+.rst{background:transparent;color:var(--mu);border:1px solid var(--br);border-radius:14px;padding:13px 18px;font:inherit;font-weight:600;font-size:14px;cursor:pointer;transition:.25s}
+.rst:hover{border-color:var(--er);color:var(--er)}
+.rst.armed{background:var(--er);color:#fff;border-color:var(--er);animation:shake .4s}
+:root[data-theme="dark"] .rst.armed{color:#2a0b0a}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.tile{background:var(--chip);border:1px solid var(--br);border-radius:14px;padding:13px 15px;animation:pop .5s both}
+.tile:nth-child(2){animation-delay:.06s}.tile:nth-child(3){animation-delay:.12s}.tile:nth-child(4){animation-delay:.18s}
+.tile small{color:var(--mu);display:block;font-size:11.5px;letter-spacing:.02em}.tile b{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.tile.k{background:var(--wabg);border-color:transparent}.tile.k b{color:var(--wa)}
+.tile.ok{background:var(--okbg);color:var(--ok);border-color:transparent}.tile.er{background:var(--erbg);color:var(--er);border-color:transparent}
+.tile.ok small,.tile.er small{color:inherit;opacity:.85}
+.bar{display:flex;gap:3px;height:12px;border-radius:7px;overflow:hidden;margin:0 0 18px;background:var(--chip)}
+.bar i{flex-basis:0;min-width:3px;border-radius:3px;transform-origin:left;animation:grow .95s cubic-bezier(.2,.7,.2,1) both}
+.note{color:var(--mu);font-size:13px;margin:0 0 14px}
+.warn,.msg{background:var(--erbg);color:var(--er);padding:12px 14px;border-radius:12px;font-weight:600;font-size:14px;margin:0 0 12px;animation:shake .4s}
+.wrap{overflow-x:auto;margin:0 -6px;padding:0 6px}
+table{border-collapse:collapse;width:100%}.adv table{min-width:700px}.simple table{min-width:480px}
+th,td{padding:11px 8px;text-align:left;border-bottom:1px solid var(--br);vertical-align:middle}
+th{font-size:11.5px;color:var(--mu);font-weight:650;text-transform:uppercase;letter-spacing:.06em}
+.m{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr{animation:up .45s both;transition:background .2s}tbody tr:hover td{background:var(--chip)}
+tbody tr:last-child td{border-bottom:0}
+tr.s td{background:var(--wabg)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:9px}
+.chip{font:600 13px ui-monospace,Menlo,Consolas,monospace;background:var(--chip);color:var(--tx);border:1px solid var(--br);border-radius:9px;padding:5px 10px;cursor:pointer;white-space:nowrap;transition:.2s}
+.chip:hover{border-color:var(--ac);color:var(--ac);background:var(--acs)}.chip:active{transform:scale(.94)}
+.cr{border:0;background:transparent;color:var(--mu);cursor:pointer;font-size:16px;padding:4px 7px;border-radius:7px;transition:.2s}.cr:hover{color:var(--ac);background:var(--acs)}
+.fd{color:var(--mu);font-size:12.5px}
+.stale{opacity:.45;filter:saturate(.6);transition:opacity .25s,filter .25s}
+#toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px) scale(.96);background:var(--tx);color:var(--bg);padding:10px 18px;border-radius:14px;font-weight:600;font-size:13.5px;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.3,1.2,.5,1);max-width:92vw;text-align:center;z-index:20;box-shadow:0 10px 30px -8px rgba(0,0,0,.4)}
+#toast.on{opacity:1;transform:translate(-50%,0) scale(1)}
+
+.card::before{content:"";position:absolute;left:24px;right:24px;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--ac),var(--ac2),transparent);opacity:.55}
+.card:nth-child(2)::before{background:linear-gradient(90deg,#e6a8c0,var(--ac2),transparent)}
+.tile{border-left:3px solid #7fc4b8}.tile:nth-child(2){border-left-color:#8aaed6}.tile:nth-child(3){border-left-color:#e8c58a}.tile:nth-child(4){border-left-color:#a99ae0}
+.tile.ok{border-left-color:var(--ok)}.tile.er{border-left-color:var(--er)}
+.lnk{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--br);background:var(--card);color:var(--tx);font-weight:600;font-size:13px;text-decoration:none;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .2s,transform .2s,color .2s}
+.lnk:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-1px)}.lnk:active{transform:scale(.95)}
+.foot{max-width:1100px;margin:8px auto 0;padding:22px 22px calc(36px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--br);color:var(--mu);font-size:13px}
+.foot b{color:var(--tx);font-weight:650}.foot b i{font-style:normal;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.foot nav{display:flex;gap:16px}.foot a{color:var(--mu);text-decoration:none;font-weight:600;transition:color .2s}.foot a:hover{color:var(--ac)}
+@media (max-width:640px){.lnk .lb{display:none}.lnk{width:38px;padding:0;justify-content:center}.foot{padding-left:14px;padding-right:14px}}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes down{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (max-width:640px){.top,main{padding-left:14px;padding-right:14px}.card{padding:18px}}
+@media (max-width:560px){.rowhead{display:none}.row{grid-template-columns:30px minmax(0,1fr) 36px}.row .no{grid-row:1/3}.row .nm{grid-column:2}.row .am,.row .live{grid-column:2;grid-row:2}.row .rm{grid-column:3;grid-row:1/3}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.hint.kh b{color:var(--wa)}
+
+/* ===== tapu rehberi popup ===== */
+:root{--gt:#fff}
+:root[data-theme="dark"]{--gt:#0b0d12}
+.gc1{--c:#2563eb}.gc2{--c:#9333ea}.gc3{--c:#059669}.gc4{--c:#ea580c}
+.gc5{--c:#db2777}
+:root[data-theme="dark"] .gc5{--c:#f9a8d4}
+.mk-hb{flex-basis:100%}
+:root[data-theme="dark"] .gc1{--c:#7ab0ff}
+:root[data-theme="dark"] .gc2{--c:#d0a2ff}
+:root[data-theme="dark"] .gc3{--c:#5eead4}
+:root[data-theme="dark"] .gc4{--c:#fdba74}
+.gov{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:rgba(6,12,18,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility 0s .6s}
+.gov.on{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .35s,visibility 0s}
+.gpop{position:relative;width:min(580px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--solid);border:1px solid var(--br);border-radius:22px;padding:24px;box-shadow:0 30px 70px -20px rgba(0,0,0,.5);transform:translate(calc(50vw - 60px),calc(50vh - 60px)) scale(.05);opacity:0;transition:transform .55s cubic-bezier(.3,1.1,.4,1),opacity .35s}
+.gov.on .gpop{transform:none;opacity:1}
+.gpop::before{content:"";position:absolute;left:24px;right:24px;top:0;height:3px;border-radius:3px;background:linear-gradient(90deg,#2563eb,#9333ea,#059669,#ea580c)}
+.ghead{display:flex;gap:14px;align-items:center;margin-bottom:16px;padding-right:36px}
+.gico{width:46px;height:46px;flex:none;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;font-size:22px;box-shadow:0 6px 18px -4px var(--acg)}
+.ghead h3{margin:0;font-size:16.5px;letter-spacing:-.01em}
+.ghead p{margin:2px 0 0;color:var(--mu);font-size:13px}
+.gx{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;border:1px solid var(--br);background:var(--chip);color:var(--mu);font-size:20px;cursor:pointer;padding:0;transition:.2s}
+.gx:hover{color:var(--er);border-color:var(--er);transform:rotate(90deg)}
+.mk{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;padding:20px 16px 16px;margin-bottom:16px;border-radius:14px;background:var(--chip);border:1px solid var(--br)}
+.mk-box{flex:1 1 240px;padding:10px 12px;border:2px solid var(--ac2);border-radius:6px;background:var(--solid)}
+.mk-l{font-size:12px;color:var(--ac2);margin-bottom:8px;font-weight:600}
+.mk-r{display:flex;align-items:center;gap:8px}
+.mk-r i{font-style:normal;color:var(--mu)}
+.mk-in{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--br2);background:var(--bg);border-radius:4px;text-align:right;font:600 12.5px ui-monospace,Menlo,Consolas,monospace}
+.mk-in span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mk-bead{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:6px;border:1px solid var(--br2);background:var(--bg);font-size:16px}
+.mk-bead svg{display:block}
+.gt svg{vertical-align:middle;margin-left:4px}
+.mk-rad{padding:10px 14px;border:1px solid var(--br2);border-radius:6px;background:var(--solid);font-size:13px}
+.mk-t{font-size:11.5px;color:var(--mu);margin-bottom:5px}
+.mk-o{position:relative;display:flex;align-items:center;gap:7px;padding:2px 0}
+.mk-o::before{content:"";width:12px;height:12px;border-radius:50%;border:1.5px solid var(--mu)}
+.mk-o.sel::before{background:radial-gradient(circle,var(--tx) 38%,transparent 42%)}
+.nb{position:relative;animation:grip 3.6s ease-out infinite;animation-delay:calc(var(--i,0)*.7s)}
+.nb::after{content:attr(data-n);position:absolute;top:-12px;right:-8px;width:20px;height:20px;border-radius:50%;background:var(--c);color:var(--gt);font:700 11.5px/20px system-ui,sans-serif;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+@keyframes grip{0%{box-shadow:0 0 0 0 var(--c)}22%,100%{box-shadow:0 0 0 12px transparent}}
+.gsteps{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:9px}
+.gs{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;background:var(--chip);border-left:3px solid var(--c);animation:up .5s both;animation-delay:calc(var(--i)*.09s + .3s)}
+.gn{width:26px;height:26px;flex:none;border-radius:50%;background:var(--c);color:var(--gt);display:grid;place-items:center;font-weight:700;font-size:12.5px}
+.gt{flex:1;font-size:14px;line-height:1.4}.gt b{color:var(--c)}
+.gend{margin:0 0 16px;padding:11px 14px;border-radius:12px;background:var(--acs);border-left:3px solid var(--ac);font-size:13.5px;line-height:1.5}
+.gok{width:100%;padding:12px;font-size:14.5px}
+.gfab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:25;display:flex;align-items:center;gap:8px;padding:12px 18px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font:inherit;font-weight:650;font-size:14px;cursor:pointer;box-shadow:0 10px 26px -8px var(--ac);transform:translateY(30px) scale(.3);opacity:0;visibility:hidden;pointer-events:none;transition:transform .5s cubic-bezier(.3,1.5,.5,1),opacity .3s,visibility 0s .5s}
+:root[data-theme="dark"] .gfab{color:#0b0d12}
+.gfab.on{transform:none;opacity:1;visibility:visible;pointer-events:auto;transition:transform .5s cubic-bezier(.3,1.5,.5,1),opacity .3s,visibility 0s;animation:gpulse 2.6s ease-in-out 1s infinite}
+@keyframes gpulse{0%,100%{box-shadow:0 10px 26px -8px var(--ac),0 0 0 0 var(--acg)}50%{box-shadow:0 10px 26px -8px var(--ac),0 0 0 11px transparent}}
+@media (max-width:560px){.gfab .lb{display:none}.gfab{padding:14px}.gpop{padding:20px 16px}}
+/* ===== sonuç: hisse oranı rehber kutusu ===== */
+.hbx{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:0 0 16px;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(219,39,119,.10),var(--acs));border:1px solid var(--br);border-left:3px solid var(--c);animation:pop .4s both}
+.hbx .ht{flex:1 1 260px;font-size:13.5px;line-height:1.55}
+.hbx .ht b{color:var(--c)}
+.hbx .ht u{text-decoration:none;font-weight:700;color:var(--er)}
+.hbm{flex:none;padding:8px 12px;border:2px solid var(--c);border-radius:6px;background:var(--solid)}
+.hbm small{display:block;font-size:11px;color:var(--c);font-weight:600;margin-bottom:5px}
+.hbm div{display:flex;align-items:center;gap:6px;font:600 12px ui-monospace,Menlo,Consolas,monospace}
+.hbm span{padding:4px 12px;border:1px solid var(--br2);border-radius:4px;background:var(--bg)}
+.gh th{padding:0 8px 0;border-bottom:0}
+.gh .hb{text-align:center;color:var(--c);font-size:11px;background:rgba(219,39,119,.10);border-radius:10px 10px 0 0;padding:6px 8px;letter-spacing:.03em}
+th.hc,td.hc{background:rgba(219,39,119,.06)}
+.nt{margin-left:8px;font-size:11px;font-weight:700;color:var(--mu);background:var(--chip);border:1px solid var(--br);border-radius:999px;padding:2px 8px;white-space:nowrap}
+
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="brand"><div class="logo">📐</div><div><h1>Hisseli Satış Hesaplama Aracı</h1><p id="sub"></p></div></div>
+ <div class="tools">
+  <div class="mt" role="group" aria-label="Mod seçimi"><button data-m="s" aria-pressed="true">Basit</button><button data-m="a" aria-pressed="false">Gelişmiş</button></div>
+  <a class="lnk" href="https://emvalis.github.io/"  rel="noopener" title="Anasayfa"><span>🏠</span><span class="lb">Anasayfa</span></a><a class="lnk" href="https://emvalis.github.io/geri-bildirim/" target="_blank" rel="noopener" title="Hata / geri bildirim"><span>💬</span><span class="lb">Geri bildirim</span></a>
+  <button class="ib" id="snd" title="Sesi aç/kapat" aria-label="Ses">🔊</button><button class="ib" id="thm" title="Açık/koyu tema" aria-label="Tema">🌙</button>
+ </div>
+</header>
+<div id="s-root" class="simple"></div>
+<div id="a-root" class="adv" hidden></div>
+<footer class="foot"><span><b><i>Emvalis</i></b> tarafından geliştirilmiştir · © 2026</span><nav><a href="https://emvalis.github.io/" target="_blank" rel="noopener">Anasayfa</a><a href="https://emvalis.github.io/geri-bildirim/" target="_blank" rel="noopener">Hata bildir / Geri bildirim</a></nav></footer>
+<div id="toast" role="status"></div>
+<div class="gov" id="gov" role="dialog" aria-modal="true" aria-labelledby="gttl">
+ <div class="gpop">
+  <button class="gx" id="gx" aria-label="Küçült">×</button>
+  <div class="ghead"><span class="gico">🧭</span><div><h3 id="gttl"></h3><p id="gsub"></p></div></div>
+  <div class="mk" id="gmock"></div>
+  <ol class="gsteps" id="gsteps"></ol>
+  <p class="gend" id="gend"></p>
+  <button class="pri gok" id="gok">Anladım, sağ alta küçült</button>
+ </div>
+</div>
+<button class="gfab" id="gfab" aria-label="Takbis adımlarını göster"><span>🧭</span><span class="lb">Takbis adımları</span></button>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const store=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const load=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+
+/* ===== ses, toast, tema ===== */
+let AC=null,soundOn=load("hh-snd")!=="0";
+const SND={click:[[700,.07,.15]],copy:[[880,.08,.2],[1320,.12,.2]],ok:[[523,.13,.2],[659,.13,.2],[784,.25,.2]],err:[[220,.2,.25,"triangle"],[165,.3,.25,"triangle"]]};
+function play(k){
+  if(!soundOn)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==="suspended")AC.resume();
+    let t=AC.currentTime;
+    SND[k].forEach(([f,d,v,ty])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty||"sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.7});
+  }catch(e){}
+}
+let tt;
+function toast(m,ms){const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),ms||1800)}
+$("snd").textContent=soundOn?"🔊":"🔇";
+$("snd").onclick=()=>{soundOn=!soundOn;$("snd").textContent=soundOn?"🔊":"🔇";store("hh-snd",soundOn?"1":"0");play("click")};
+function setTheme(t,sv){document.documentElement.setAttribute("data-theme",t);$("thm").textContent=t==="dark"?"☀️":"🌙";if(sv)store("emv",t)}
+setTheme(load("emv")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"));
+$("thm").onclick=()=>{setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark",1);play("click")};
+addEventListener("storage",e=>{if(e.key==="emv"&&(e.newValue==="dark"||e.newValue==="light"))setTheme(e.newValue)});
+
+/* ===== ortak tam kesirli aritmetik (BigInt) ===== */
+const MAXD=15;
+const G=(a,b)=>{a=a<0n?-a:a;b=b<0n?-b:b;while(b){[a,b]=[b,a%b]}return a};
+const F=(n,d=1n)=>{if(d===0n)throw new Error("Payda sıfır olamaz");if(d<0n){n=-n;d=-d}const g=G(n,d)||1n;return[n/g,d/g]};
+const add=(x,y)=>F(x[0]*y[1]+y[0]*x[1],x[1]*y[1]);
+const sub=(x,y)=>F(x[0]*y[1]-y[0]*x[1],x[1]*y[1]);
+const mul=(x,y)=>F(x[0]*y[0],x[1]*y[1]);
+const div=(x,y)=>{if(y[0]===0n)throw new Error("Sıfıra bölme");return F(x[0]*y[1],x[1]*y[0])};
+const cmp=(x,y)=>{const a=x[0]*y[1],b=y[0]*x[1];return a<b?-1:a>b?1:0};
+const ZERO=[0n,1n],ONE=[1n,1n];
+/* 5000 · 5.000 · 1.250,75 · 1,250.75 · 1250,75 geçerli; tek ayraç + tam 3'erli grup binliktir */
+const GROUPED=/^[1-9]\d{0,2}([.,]\d{3})+$/;
+function norm(s,intOnly){
+  s=String(s).replace(/[\s\u00a0]/g,"");
+  if(intOnly){if(/^\d+$/.test(s))return s;if(GROUPED.test(s))return s.replace(/[.,]/g,"");throw new Error("tam sayı olmalı ("+s+")")}
+  const c=s.lastIndexOf(","),d=s.lastIndexOf(".");
+  if(c>=0&&d>=0)return c>d?s.replace(/\./g,"").replace(",","."):s.replace(/,/g,"");
+  if(GROUPED.test(s))return s.replace(/[.,]/g,"");
+  if((s.match(/,/g)||[]).length>1||(s.match(/\./g)||[]).length>1)throw new Error("Geçersiz sayı: "+s);
+  return s.replace(",",".");
+}
+function dec(s,intOnly){
+  const t=norm(String(s),intOnly);
+  if(t.length>80)throw new Error("Sayı çok uzun");
+  if(!/^(\d+(\.\d*)?|\.\d+)$/.test(t))throw new Error("Geçersiz sayı: "+s);
+  const [i,f=""]=t.split(".");
+  return F(BigInt((i||"0")+f),10n**BigInt(f.length));
+}
+function parse(s,intOnly){
+  s=(s||"").trim();if(!s)throw new Error("Boş alan var");
+  if(s.includes("/")){
+    const p=s.split("/");if(p.length!==2)throw new Error("Geçersiz kesir: "+s);
+    const y=dec(p[1],intOnly);if(y[0]===0n)throw new Error("Payda sıfır olamaz");
+    return div(dec(p[0],intOnly),y);
+  }
+  return dec(s,intOnly);
+}
+function toDec(x,k){
+  const neg=x[0]<0n,n=neg?-x[0]:x[0],p=10n**BigInt(k);
+  const v=(2n*n*p+x[1])/(2n*x[1]);
+  const s=v.toString().padStart(k+1,"0");
+  return (neg&&v!==0n?"−":"")+s.slice(0,-k)+","+s.slice(-k);
+}
+function exactDec(v){
+  let d=v[1],a=0,b=0;
+  while(d%2n===0n){d/=2n;a++}
+  while(d%5n===0n){d/=5n;b++}
+  if(d!==1n)return null;
+  const k=Math.max(a,b);return k?toDec(v,k):v[0].toString();
+}
+const grp=s=>String(s).replace(/\B(?=(\d{3})+(?!\d))/g,".");
+const gf=s=>{const p=s.split(",");return grp(p[0])+","+p[1]};
+const ok15=x=>x[0].toString().length<=MAXD&&x[1].toString().length<=MAXD;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const PAL=["#7fc4b8","#e6a8c0","#8aaed6","#e8c58a","#a99ae0","#9ccf9a","#f0a58f","#6fb5d6"];
+const hue=i=>PAL[i%PAL.length];
+const S_=v=>typeof v==="string"?v:"";
+const HINT={s:"Her alıcıya vereceğiniz m² miktarını yazın. Son alıcıya yazmayın, kalanın tamamını o alır.",
+ m2:"Her alıcı için almak istediği m² alanını yazın (192 veya 149,89 gibi; kesir yazılamaz). Son alıcıya m² yazılmaz: kalanın tamamını o alır. Girdiler bu tarayıcıda saklanır.",
+ pay:"Her alıcı için satıcının hissesinden alacağı oranı yazın: 1/2 yarısı, 1/4 dörtte biri demektir, 0,25 de aynı anlama gelir. Son alıcıya oran yazılmaz. Girdiler bu tarayıcıda saklanır."};
+
+/* ===== tapu rehberi (popup + sağ alt buton) ===== */
+const gov=$("gov"),gfab=$("gfab");
+let gtm;
+async function gcopy(t){
+  let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}catch(e){
+    try{const a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();ok=document.execCommand("copy");a.remove()}catch(_){}
+  }
+  if(ok){play("copy");toast("Kopyalandı: "+t)}else{play("err");toast("Kopyalanamadı")}
+}
+function guideOpen(){clearTimeout(gtm);gfab.classList.remove("on");gov.classList.add("on");$("gok").focus({preventScroll:true})}
+function guideClose(){if(!gov.classList.contains("on"))return;gov.classList.remove("on");clearTimeout(gtm);gtm=setTimeout(()=>gfab.classList.add("on"),380);play("click")}
+function guideHide(){clearTimeout(gtm);gov.classList.remove("on");gfab.classList.remove("on")}
+const BEAD=`<svg viewBox="0 0 28 28" width="28" height="28" aria-hidden="true"><g stroke="#127884" stroke-width="1" stroke-linejoin="round" fill="#35c3d0"><rect x="8" y="2" width="9" height="9"/><rect x="4.5" y="7" width="9" height="9"/><rect x="1" y="12" width="9" height="9"/></g><path d="M23 3V12" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M19 11L23 16L27 11Z" fill="currentColor"/><rect x="20" y="20" width="6.5" height="6.5" fill="#d11f1f" stroke="#7a0f0f" stroke-width="1"/></svg>`;
+const gstep=(n,t,v)=>`<li class="gs gc${n}" style="--i:${n-1}"><span class="gn">${n}</span><span class="gt">${t}</span>${v?`<button class="chip" data-gc="${v}" title="Kopyala">${grp(v)} ⧉</button>`:""}</li>`;
+function guideShow(keep,x,y){
+  const px=keep?x:"1",py=keep?y:"1";
+  $("gttl").textContent=keep?"Satıcıda hisse kalıyor: Çıkartma yöntemi":"Satıcıda hisse kalmıyor: Oran yöntemi";
+  $("gsub").textContent=keep?"Takbis programında önce satıcının hissesinden satılacak kısmı çıkartın.":"Satıcının tüm hissesi devredildiği için oran 1/1 girilir.";
+  $("gmock").innerHTML=
+   `<div class="mk-box"><div class="mk-l">${keep?"Çıkartılacak Pay / Payda":"Çarpan Pay / Payda"}</div><div class="mk-r">`+
+   `<span class="mk-in nb gc2" style="--i:1" data-n="2"><span>${grp(px)}</span></span><i>/</i>`+
+   `<span class="mk-in nb gc3" style="--i:2" data-n="3"><span>${grp(py)}</span></span>`+
+   `<span class="mk-bead nb gc4" style="--i:3" data-n="4">${BEAD}</span></div></div>`+
+   `<div class="mk-rad"><div class="mk-t">Eksiltme</div>`+
+   `<div class="mk-o${keep?"":" sel nb gc1"}" ${keep?"":'style="--i:0" data-n="1"'}>Oran</div>`+
+   `<div class="mk-o${keep?" sel nb gc1":""}" ${keep?'style="--i:0" data-n="1"':""}>Çıkartma</div></div>`;
+   
+  $("gsteps").innerHTML=keep
+   ?gstep(1,"<b>Çıkartma</b> seçeneğine tıklayın")+gstep(2,"<b>Pay</b> kısmına şunu yazın",px)+gstep(3,"<b>Payda</b> kısmına şunu yazın",py)+gstep(4,"<b>Boncuk</b> simgesine tıklayın "+BEAD)
+   :gstep(1,"<b>Oran</b> seçeneği seçili kalsın")+gstep(2,"<b>Pay</b> kısmına şunu yazın","1")+gstep(3,"<b>Payda</b> kısmına şunu yazın","1")+gstep(4,"<b>Boncuk</b> simgesine tıklayın "+BEAD);
+
+  $("gend").innerHTML=keep
+   ?`<b>${grp(px)} / ${grp(py)}</b>, satıcının hissesinden alıcılara verilecek toplam paydır. Bu işlemi yaptıktan sonra alıcıların paylarını <b>sonuç tablosundan</b> girin.`
+   :`Satıcının hissesinin tamamı devredildiği için çarpan <b>1 / 1</b> olur. Bu işlemi yaptıktan sonra alıcıların paylarını <b>sonuç tablosundan</b> girin.`;
+  clearTimeout(gtm);gtm=setTimeout(guideOpen,500);
+}
+gov.addEventListener("click",e=>{
+  const c=e.target.closest("[data-gc]");
+  if(c){gcopy(c.dataset.gc);return}
+  if(e.target===gov||e.target.closest("#gx,#gok"))guideClose();
+});
+gfab.addEventListener("click",()=>{play("click");guideOpen()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")guideClose()});
+
+/* ===== uygulama üreticisi: adv=false Basit, adv=true Gelişmiş ===== */
+function makeApp(root,key,adv){
+const q=s=>root.querySelector(s);
+const fld=m=>m==="pay"?"ap":"am",kfld=m=>m==="pay"?"kalP":"kalM";
+const mkB=()=>({n:"",am:"",ap:"",src:"m2"});
+const mkDef=()=>({ver:2,mode:"m2",kalMode:"m2",alan:"",sp:"",spd:"",kal:false,kalM:"",kalP:"",kalSrc:"m2",buyers:[mkB(),mkB()]});
+function sanitize(j){
+  const d=mkDef();
+  if(!j||typeof j!=="object"||!Array.isArray(j.buyers)||!j.buyers.length)return d;
+  d.mode=adv&&j.mode==="pay"?"pay":"m2";d.kalMode=adv&&j.kalMode==="pay"?"pay":"m2";
+  ["alan","sp","spd","kalM","kalP"].forEach(k=>d[k]=S_(j[k]));d.kal=!!j.kal;d.kalSrc=j.kalSrc==="pay"?"pay":"m2";
+  d.buyers=j.buyers.slice(0,5000).map(b=>{b=b&&typeof b==="object"?b:{};const x=mkB();x.n=S_(b.n);x.am=S_(b.am);x.ap=S_(b.ap);x.src=b.src==="pay"?"pay":"m2";return x});
+  return d;
+}
+let st=mkDef();try{st=sanitize(JSON.parse(load(key)||"null"))}catch(e){}
+const save=()=>store(key,JSON.stringify(st));
+const kget=()=>st[kfld(st.kalMode)];
+const kset=v=>{st[kfld(st.kalMode)]=v;st.kalSrc=st.kalMode};
+const hasKeep=()=>adv?st.kal:!!st.kalM.trim();
+
+root.innerHTML=`<main>
+<section class="card"><h2><span class="st">1</span>Taşınmaz ve satıcı</h2>
+ <div class="g2">
+  <div><label>Taşınmaz alanı (m²)</label><input type="text" data-k="alan" inputmode="decimal" autocomplete="off" placeholder="${adv?"Tapudaki yüzölçümü, örn. 5000, 5.000 veya 1250,75":"Tapudaki taşınmaz yüzölçümü"}"></div>
+  <div><label>Satıcının payı${adv?" (pay / payda)":""}</label><div class="pp"><input type="text" data-k="sp" inputmode="numeric" autocomplete="off" placeholder="Pay" aria-label="Pay"><span>/</span><input type="text" data-k="spd" inputmode="numeric" autocomplete="off" placeholder="Payda" aria-label="Payda"></div></div>
+ </div>
+ ${adv?`<div class="info" data-r="info"></div>
+ <div class="sw"><label class="tg"><input type="checkbox" data-r="kal"><span class="trk"></span>Satıcıda m² kalacak</label>
+  <input type="text" class="kv" data-r="kalv" autocomplete="off" hidden aria-label="Satıcıda kalacak miktar">
+  <div class="seg2" data-r="kmode" hidden role="radiogroup" aria-label="Kalacak miktar türü"><button data-km="m2" role="radio">m²</button><button data-km="pay" role="radio">Hisse oranı</button></div></div>
+  <p class="hint kh" data-r="khint" hidden style="margin-top:12px"></p>`
+ :`<div class="kp"><label>Satıcıda kalacak m² <small>(isteğe bağlı)</small></label><input type="text" data-r="kalv" inputmode="decimal" autocomplete="off" placeholder="Boş bırakırsanız hepsi satılır"></div>`}
+</section>
+<section class="card"><h2><span class="st">2</span>Alıcılar</h2>
+ ${adv?`<div class="cnt"><b>Alıcı sayısı</b><div class="step"><button data-r="minus" aria-label="Azalt">−</button><input type="number" data-r="n" min="1" max="5000" aria-label="Alıcı sayısı"><button data-r="plus" aria-label="Artır">+</button></div><span class="fd">En fazla 5000</span></div>
+ <div class="modes" data-r="seg" role="radiogroup" aria-label="Giriş türü"><button class="mode" data-mode="m2" role="radio"><span class="mi">📏</span><span><b>Metrekare (m²) olarak</b><small>Alıcıya kaç m² vereceğinizi yazarsınız.</small><em>Örnek: 192 · 149,89</em></span></button><button class="mode" data-mode="pay" role="radio"><span class="mi">🍰</span><span><b>Hisse oranı olarak</b><small>Satıcının hissesinin kaçta kaçını vereceğinizi yazarsınız.</small><em>Örnek: 1/2 · 1/4 · 0,25</em></span></button></div>
+ <p class="hint" data-r="hint" style="margin-top:12px"></p><div class="rowhead" data-r="rh"></div>`:`<p class="hint">${HINT.s}</p>`}
+ <div data-r="rows"></div>
+ <div class="act" style="margin:14px 0 0"><button class="sec" data-r="add">+ Alıcı ekle</button>${adv?`<button class="sec" data-r="eq" hidden title="Satılacak hisseyi tüm alıcılara eşit böler">⚖ Eşit böl</button>`:""}<span class="fd" data-r="sum"></span></div>
+</section>
+<div class="act"><button class="pri" data-r="go">Hesapla</button><button class="rst" data-r="rst">↺ Sıfırla</button></div>
+<div data-r="out" aria-live="polite"></div></main>`;
+const R=n=>q(`[data-r="${n}"]`);
+
+/* kopyalama */
+let lastTsv="";
+async function copy(txt){
+  let done=false;
+  try{await navigator.clipboard.writeText(txt);done=true}catch(e){
+    try{const a=document.createElement("textarea");a.value=txt;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();done=document.execCommand("copy");a.remove()}catch(_){}
+  }
+  if(done){play("copy");toast("Kopyalandı: "+(txt.length>40?txt.slice(0,40)+"…":txt))}else{play("err");toast("Kopyalanamadı")}
+}
+root.addEventListener("click",e=>{
+  if(e.target.closest("[data-r=cpAll]")){copy(lastTsv);return}
+  const c=e.target.closest("[data-copy]");if(c)copy(c.getAttribute("data-copy"));
+});
+
+/* doğrulama ve hesap */
+function P(v,l,io,noFrac){
+  if(!String(v||"").trim())throw new Error(l+" girilmeli");
+  if(noFrac&&String(v).includes("/"))throw new Error(l+": metrekare alanına kesir yazılamaz. Ondalık yazın (149,89)"+(adv?' ya da "Hisse oranı" seçeneğini kullanın.':"."));
+  if(io&&String(v).includes("/"))throw new Error(l+": kesir yazılamaz, tam sayı girin");
+  try{return parse(v,io)}catch(e){throw new Error(l+": "+e.message)}
+}
+function base(){
+  const A=P(st.alan,"Taşınmaz alanı",false,true);
+  if(A[0]<=0n)throw new Error("Alan sıfırdan büyük olmalı");
+  const sp=P(st.sp,"Satıcı payı (pay)",true),sd=P(st.spd,"Satıcı payı (payda)",true);
+  if(sd[0]===0n)throw new Error("Satıcı payının paydası sıfır olamaz");
+  const S=div(sp,sd);
+  if(S[0]<=0n||cmp(S,ONE)>0)throw new Error("Satıcı payı 0 ile 1 arasında olmalı (pay, paydadan büyük olamaz)");
+  return{A,S,own:mul(A,S)};
+}
+function keepVal(own){
+  if(!hasKeep())return ZERO;
+  if(adv&&st.kalMode==="pay"){
+    const f=P(kget(),"Satıcıda kalan hisse");
+    if(f[0]<0n||cmp(f,ONE)>=0)throw new Error("Satıcıda kalan hisse oranı 0 ile 1 arasında olmalı (örn. 1/2)");
+    return mul(own,f);
+  }
+  const k=P(kget(),"Kalacak m²",false,true);
+  if(k[0]<0n)throw new Error("Kalacak m² negatif olamaz");
+  return k;
+}
+function inputs(){
+  const{A,S,own}=base(),keep=keepVal(own),sold=sub(own,keep);
+  if(sold[0]<=0n)throw new Error("Satıcıda kalacak alan, satıcının sahip olduğu alandan ("+toDec(own,4)+" m²) küçük olmalı");
+  const n=st.buyers.length,req=[],f=fld(st.mode),pm=st.mode==="pay";let sum=ZERO;
+  for(let i=0;i<n-1;i++){
+    let v=P(st.buyers[i][f],(i+1)+". alıcının "+(pm?"hissesi":"m²"),false,!pm);
+    if(pm){if(cmp(v,ONE)>0)throw new Error((i+1)+". alıcının oranı 1 değerinden büyük olamaz");v=mul(own,v)}
+    if(v[0]<=0n)throw new Error((i+1)+". alıcı için "+(pm?"oran":"m²")+" sıfırdan büyük olmalı");
+    req.push(v);sum=add(sum,v);
+  }
+  const rest=sub(sold,sum);
+  if(rest[0]<=0n)throw new Error("Alıcı alanları toplamı ("+toDec(sum,4)+" m²) satılacak alana ("+toDec(sold,4)+" m²) eşit veya fazla; son alıcıya alan kalmıyor");
+  req.push(rest);
+  return{A,S,keep,own,sold,req,n,names:st.buyers.map((b,i)=>b.n.trim()||("Alıcı "+(i+1)))};
+}
+function live(){
+  const el=R("live"),sm=R("sum");if(!el)return;
+  try{
+    const r=inputs(),rest=r.req[r.n-1],f=div(rest,r.own);
+    el.className="live";
+    el.textContent="Kalan: "+(adv&&st.mode==="pay"?f[0]+"/"+f[1]+" hisse · ":"")+toDec(rest,4)+" m²";
+    sm.textContent="Satılacak toplam: "+toDec(r.sold,4)+" m² · "+r.n+" alıcı";
+  }catch(e){
+    const w=/girilmeli$/.test(e.message);
+    el.className=w?"live":"live bad";el.textContent=w?"Kalan: otomatik":e.message;sm.textContent=st.buyers.length+" alıcı";
+  }
+}
+function calc(){
+  const r=inputs(),{A,S,keep,req}=r;
+  const targets=[...req.map(a=>div(a,A)),div(keep,A)];
+  let shares,adjusted=false,D=null;
+  if(targets.every(ok15))shares=targets;
+  else{
+    adjusted=true;
+    const m=(10n**BigInt(MAXD)-1n)/S[1];
+    if(m<1n)throw new Error("Satıcı payının paydası 15 basamağa çok yakın, ince ayar yapılamıyor");
+    D=S[1]*m;
+    const t=targets.map(x=>mul(x,[D,1n])),k=t.map(x=>x[0]/x[1]);
+    let deficit=S[0]*m-k.reduce((a,b)=>a+b,0n);
+    const order=t.map((x,i)=>[i,sub(x,[k[i],1n])]).sort((a,b)=>cmp(b[1],a[1]));
+    for(let j=0;j<order.length&&deficit>0n;j++){k[order[j][0]]+=1n;deficit--}
+    if(deficit!==0n)throw new Error("Dağıtım hatası");
+    const z=k.slice(0,r.n).findIndex(v=>v===0n);
+    if(z>=0)throw new Error((z+1)+". alıcının payı 15 basamak sınırında sıfıra yuvarlandı; alan taşınmaza göre çok küçük");
+    shares=k.map(v=>F(v,D));
+  }
+  let tot=ZERO;shares.forEach(s=>tot=add(tot,s));
+  return Object.assign(r,{shares,adjusted,D,exact:cmp(tot,S)===0,digitsOk:shares.every(ok15)});
+}
+
+/* sonuç */
+const chip=(v,z)=>`<button class="chip" style="${z?"opacity:.5":""}" data-copy="${v}" title="Kopyalamak için tıkla">${grp(v)}</button>`;
+const NT=`<span class="nt">Takbis'e girilmez</span>`;
+const HBOX=`<div class="hbx gc5"><div class="ht"><b>Takbis'e giriş:</b> Her alıcının <b>Pay</b> ve <b>Payda</b> değerini (pembe sütunlar) <b>Hisse Oranı</b> kutularına girin. <u>Çarpan Pay/Payda kutusuna yazmayın.</u> “Satıcıda kalan” satırı girilmez.</div><div class="hbm"><small>Hisse Oranı</small><div><span>Pay</span>/<span>Payda</span></div></div></div>`;
+
+function render(r){
+  const good=r.exact&&r.digitsOk,showKeep=r.keep[0]>0n;
+  const all=r.shares.map((s,i)=>({s,name:i<r.n?r.names[i]:"Satıcıda kalan",req:i<r.n?r.req[i]:r.keep,seller:i>=r.n,i})).filter(x=>!x.seller||showKeep);
+  let h=`<div class="card"><h2><span class="st">✓</span>Sonuç</h2><div class="tiles">`+
+   [["Satıcının toplam m²",toDec(r.own,4),""],["Satılan m²",toDec(r.sold,4),""],["Satıcıda kalan m²",toDec(r.keep,4),showKeep?"k":""],["Doğrulama",good?"✔ Tam tutuyor":"✘ Hata var",good?"ok":"er"]]
+   .map(t=>`<div class="tile ${t[2]}"><small>${t[0]}</small><b>${t[1]}</b></div>`).join("")+`</div>`+
+   (adv?`<div class="bar" aria-hidden="true">${all.map(x=>`<i title="${esc(x.name)}" style="flex-grow:${Number(x.s[0]*10n**12n/x.s[1])};background:${x.seller?"#e0a93e":hue(x.i)};animation-delay:${Math.min(x.i,20)*35}ms"></i>`).join("")}</div>`:"")+
+   (good?"":`<p class="warn">Toplam satıcının payına eşit değil ya da bir değer 15 basamağı aşıyor. Sonucu kullanmayın.</p>`)+
+   `<p class="note">${r.exact?`Tüm paylar toplamı satıcının payına (${grp(r.S[0])} / ${grp(r.S[1])}) tam eşittir. `:""}`+
+   (r.adjusted?`15 basamak sınırı için ince ayar yapıldı (ortak payda ${grp(r.D)}); her pay istenen alandan en fazla ${toDec(div(r.A,[r.D,1n]),10)} m² sapar. `:(adv?"Tam kesirler 15 basamağa sığdığı için ayar yapılmadı, fark yoktur. ":""))+
+   `Pay veya paydaya dokununca o sayı kopyalanır.</p>`+HBOX+`<div class="wrap"><table><thead>`+
+   (adv?`<tr class="gh"><th colspan="3"></th><th colspan="2" class="hb gc5">Hisse Oranı kutusuna ↓</th><th colspan="3"></th></tr><tr><th>#</th><th>Ad</th><th class="m">İstenen m²</th><th class="hc">Pay</th><th class="hc">Payda</th><th class="m">Gerçek m²</th><th class="m">Fark</th><th></th></tr>`
+   :`<tr class="gh"><th colspan="2"></th><th colspan="2" class="hb gc5">Hisse Oranı kutusuna ↓</th></tr><tr><th>Ad</th><th class="m">m²</th><th class="hc">Pay</th><th class="hc">Payda</th></tr>`)+`</thead><tbody>`;
+  lastTsv="Ad\tPay\tPayda\tm²\n";
+  all.forEach((x,j)=>{
+    const act=mul(r.A,x.s),z=x.s[0]===0n,dot=`<span class="dot" style="background:${x.seller?"#e0a93e":hue(x.i)}"></span>`;
+    h+=`<tr class="${x.seller?"s":""}" style="animation-delay:${Math.min(j,15)*40}ms">`;
+    if(adv){
+      const dif=sub(act,x.req),d=dif[0]===0n?"0":(dif[0]<0n?"−":"+")+toDec([dif[0]<0n?-dif[0]:dif[0],dif[1]],10);
+      h+=`<td>${x.seller?"—":x.i+1}</td><td>${dot}${esc(x.name)}${x.seller?NT:""}</td><td class="m">${toDec(x.req,4)}</td><td class="hc">${chip(x.s[0].toString(),z)}</td><td class="hc">${chip(x.s[1].toString(),z)}</td><td class="m">${toDec(act,8)}</td><td class="m fd">${d}</td><td><button class="cr" data-copy="${x.s[0]}/${x.s[1]}" title="pay/payda olarak kopyala" aria-label="Kopyala">⧉</button></td>`;
+    }else h+=`<td>${dot}${esc(x.name)}${x.seller?NT:""}</td><td class="m">${toDec(act,4)}</td><td class="hc">${chip(x.s[0].toString(),z)}</td><td class="hc">${chip(x.s[1].toString(),z)}</td>`;
+    h+=`</tr>`;
+    lastTsv+=x.name.replace(/[\t\n]/g," ")+"\t"+x.s[0]+"\t"+x.s[1]+"\t"+toDec(act,adv?8:4).replace(/\./g,"")+"\n";
+  });
+  h+=`</tbody></table></div><div class="act" style="margin:14px 0 0"><button class="sec" data-r="cpAll">Tümünü kopyala (Excel için)</button></div></div>`;
+  const o=R("out");o.innerHTML=h;o.classList.remove("stale");play(good?"ok":"err");
+  if(good){const sd=sub(r.S,r.shares[r.n]);guideShow(showKeep,sd[0].toString(),sd[1].toString())}else guideHide();
+  o.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"});
+}
+R("go").onclick=()=>{try{render(calc())}catch(e){guideHide();play("err");R("out").innerHTML=`<div class="msg">${esc(e.message)}</div>`}};
+root.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"&&e.target.type==="text")R("go").click()});
+root.addEventListener("input",()=>{const o=R("out");if(o.firstChild)o.classList.add("stale");guideHide()});
+
+/* m² <-> oran çevirme (yalnız gelişmiş) */
+const ownA=()=>{try{return base().own}catch(e){return null}};
+function conv(s,to,own){
+  s=String(s||"").trim();if(!s)return "";if(!own)return null;
+  try{if(to==="pay"){const f=div(parse(s),own);return f[1]===1n?String(f[0]):f[0]+"/"+f[1]}return exactDec(mul(own,parse(s)))}catch(e){return null}
+}
+function convAll(from,to){
+  const own=ownA(),last=st.buyers.length-1;let lost=0;
+  st.buyers.forEach((b,i)=>{
+    if(i===last||b.src===to)return;
+    const s=b[fld(from)];
+    if(!s.trim()){b[fld(to)]="";return}
+    const r=conv(s,to,own);
+    if(r===null){b[fld(to)]="";lost++}else{b[fld(to)]=r;b.src=to}
+  });
+  return lost;
+}
+function convKeep(from,to){
+  if(st.kalSrc===to)return 0;
+  const s=st[kfld(from)];
+  if(!s.trim()){st[kfld(to)]="";return 0}
+  const r=conv(s,to,ownA());
+  if(r===null){st[kfld(to)]="";return 1}
+  st[kfld(to)]=r;st.kalSrc=to;return 0;
+}
+const lostMsg=(n,to)=>n+" değer "+(to==="m2"?"m² olarak":"oran olarak")+" tam yazılamadığı (örn. 1/3) ya da alan/pay eksik olduğu için boş bırakıldı. Orijinal değeriniz korunuyor, geri dönünce görünür.";
+
+/* form */
+["alan","sp","spd"].forEach(k=>{const el=q(`[data-k="${k}"]`);el.value=st[k];el.addEventListener("input",()=>{st[k]=el.value;save();live();info()})});
+R("kalv").value=kget();
+R("kalv").addEventListener("input",()=>{kset(R("kalv").value);save();live();info()});
+
+function buildRows(fresh){
+  const box=R("rows"),n=st.buyers.length,m=st.mode,f=fld(m),own=adv?ownA():null;
+  if(adv)R("n").value=n;box.innerHTML="";
+  st.buyers.forEach((b,i)=>{
+    const last=i===n-1,d=document.createElement("div");
+    d.className="row"+(last?" last":"")+(i===fresh?" new":"");
+    let amt;
+    if(last)amt=`<div class="live" data-r="live">—</div>`;
+    else{
+      let ph=m==="pay"?"Hisse (1/2, 1/4 veya 0,25)":(adv?"m² (192 veya 149,89)":"m² (örn. 192)");
+      const o=b[fld(b.src)];
+      if(adv&&!b[f].trim()&&b.src!==m&&o.trim()){
+        let ap="";
+        if(m==="m2"&&own){try{ap="≈ "+toDec(mul(own,parse(o)),4)+" m² ("+o+") · m² girin"}catch(e){}}
+        ph=ap||"("+o+(m==="m2"?" hisse":" m²")+") · "+(m==="m2"?"m²":"oran")+" girin";
+      }
+      amt=`<input type="text" class="am" data-i="${i}" inputmode="${m==="pay"?"text":"decimal"}" placeholder="${esc(ph)}" value="${esc(b[f])}" autocomplete="off" aria-label="${i+1}. alıcı miktarı">`;
+    }
+    d.innerHTML=`<span class="no">${i+1}</span><input type="text" class="nm" data-i="${i}" placeholder="Ad Soyad (isteğe bağlı)" value="${esc(b.n)}" autocomplete="off" aria-label="${i+1}. alıcı adı">${amt}<button class="rm" data-rm="${i}" title="Alıcıyı sil" aria-label="Alıcıyı sil"${n<(adv?2:3)?" disabled":""}>×</button>`;
+    box.appendChild(d);
+    const a=d.querySelector(".am");if(a&&m==="m2"&&a.value.includes("/"))a.classList.add("bad");
+  });
+  live();
+}
+R("rows").addEventListener("input",e=>{
+  const i=+e.target.dataset.i;if(isNaN(i)||!st.buyers[i])return;
+  const b=st.buyers[i],v=e.target.value;
+  if(e.target.classList.contains("nm"))b.n=v;
+  else{b[fld(st.mode)]=v;b.src=st.mode;e.target.classList.toggle("bad",st.mode==="m2"&&v.includes("/"))}
+  save();live();
+});
+R("rows").addEventListener("click",e=>{
+  const b=e.target.closest("[data-rm]");if(!b||st.buyers.length<(adv?2:3))return;
+  st.buyers.splice(+b.dataset.rm,1);save();buildRows();play("click");
+});
+function setN(v,fresh){
+  v=Math.max(1,Math.min(5000,parseInt(v)||1));
+  while(st.buyers.length<v)st.buyers.splice(st.buyers.length-1,0,mkB());
+  while(st.buyers.length>v)st.buyers.splice(st.buyers.length-2,1);
+  save();buildRows(fresh);
+}
+R("add").onclick=()=>{
+  if(st.buyers.length>=5000){toast("En fazla 5000 alıcı eklenebilir");return}
+  setN(st.buyers.length+1,st.buyers.length-1);play("click");
+  const a=root.querySelectorAll(".row .nm");if(a.length>1)a[a.length-2].focus();
+};
+
+/* sıfırla (iki dokunuş) */
+let rt;
+R("rst").onclick=()=>{
+  const b=R("rst");
+  if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="⚠ Tüm veriler silinecek, onaylamak için tekrar dokunun";play("err");clearTimeout(rt);rt=setTimeout(()=>{b.classList.remove("armed");b.textContent="↺ Sıfırla"},4000);return}
+  clearTimeout(rt);b.classList.remove("armed");b.textContent="↺ Sıfırla";
+  st=mkDef();try{localStorage.removeItem(key)}catch(e){}
+  ["alan","sp","spd"].forEach(k=>q(`[data-k="${k}"]`).value="");
+  R("kalv").value="";
+  R("out").innerHTML="";guideHide();setKM();setMode("m2");info();play("copy");toast("Tüm girdiler sıfırlandı");
+};
+
+/* gelişmiş: mod, kalan, bilgi, eşit böl */
+function setMode(m){
+  st.mode=adv&&m==="pay"?"pay":"m2";save();
+  if(adv){
+    root.querySelectorAll("[data-mode]").forEach(b=>{const on=b.dataset.mode===st.mode;b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
+    R("hint").textContent=HINT[st.mode];R("eq").hidden=st.mode!=="pay";
+    R("rh").innerHTML="<span></span><span>Ad Soyad</span><span>"+(st.mode==="pay"?"Verilecek hisse oranı":"Verilecek m²")+"</span><span></span>";
+  }
+  buildRows();
+}
+function setKM(){
+  if(!adv)return;
+  R("kalv").hidden=!st.kal;R("kmode").hidden=!st.kal;R("kmode").dataset.v=st.kalMode;R("kal").checked=st.kal;
+  R("kalv").value=kget();
+  root.querySelectorAll("[data-km]").forEach(b=>{const on=b.dataset.km===st.kalMode;b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
+  R("kalv").placeholder=st.kalMode==="pay"?"Örn. 1/4 veya 0,25":"Örn. 100 veya 149,89";
+  R("kalv").inputMode=st.kalMode==="pay"?"text":"decimal";
+  const kh=R("khint");kh.hidden=!st.kal;
+  kh.innerHTML=st.kalMode==="pay"
+    ?"<b>Satıcının kendi hissesine göre</b> oran yazın (taşınmazın tamamına göre değil). <b>1/4</b> yazarsanız satıcının m²'sinin dörtte biri kendisinde kalır, kalan dörtte üçü satılır."
+    :"Satıcının kendisinde bırakacağı alanı <b>m²</b> olarak yazın. Bu alan satıcının toplam m²'sinden düşülür, kalan satılır.";
+}
+function info(){
+  if(!adv)return;
+  let h="";
+  const ic=(l,v,c)=>`<div class="ic ${c||""}"><small>${l}</small><b>${v}</b></div>`;
+  try{
+    if(!String(st.alan).trim()||String(st.alan).includes("/"))throw 0;
+    const A=parse(st.alan);h+=ic("Taşınmaz alanı",gf(toDec(A,2))+" m²","c1");
+    if(!String(st.sp).trim()||!String(st.spd).trim())throw 0;
+    const own=mul(A,div(parse(st.sp,true),parse(st.spd,true)));h+=ic("Satıcının m²",gf(toDec(own,4))+" m²","c2");
+    if(st.kal&&kget().trim()){
+      const kv=parse(kget()),pay=st.kalMode==="pay",keep=pay?mul(own,kv):kv;
+      if(pay?cmp(kv,ONE)<0:!kget().includes("/")){
+        h+=ic("Satılacak m²",gf(toDec(sub(own,keep),4))+" m²","c3");
+        h+=ic("Satıcıda kalan",(pay?kv[0]+"/"+kv[1]+" hisse · ":"")+gf(toDec(keep,4))+" m²","c4");
+      }
+    }
+  }catch(e){}
+  R("info").innerHTML=h;
+}
+if(adv){
+  R("kal").addEventListener("change",()=>{st.kal=R("kal").checked;save();setKM();live();info();play("click")});
+  R("n").addEventListener("change",()=>setN(R("n").value));
+  R("minus").onclick=()=>{setN(st.buyers.length-1);play("click")};
+  R("plus").onclick=()=>{setN(st.buyers.length+1,st.buyers.length-1);play("click")};
+  root.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
+    const nm=b.dataset.mode==="pay"?"pay":"m2";let lost=0;
+    if(nm!==st.mode)lost=convAll(st.mode,nm);
+    setMode(nm);play("click");if(lost)toast(lostMsg(lost,nm),6000);
+  });
+  root.querySelectorAll("[data-km]").forEach(b=>b.onclick=()=>{
+    const nm=b.dataset.km==="pay"?"pay":"m2";let lost=0;
+    if(nm!==st.kalMode)lost=convKeep(st.kalMode,nm);
+    st.kalMode=nm;save();setKM();live();info();play("click");if(lost)toast(lostMsg(1,nm),6000);
+  });
+  R("eq").onclick=()=>{
+    try{
+      const n=st.buyers.length;
+      if(n<2){toast("Eşit bölmek için en az 2 alıcı gerekir");return}
+      const{own}=base(),sold=sub(own,keepVal(own));
+      if(sold[0]<=0n)throw new Error("Satılacak alan sıfırdan büyük olmalı");
+      const sh=div(div(sold,own),[BigInt(n),1n]),s=sh[0]+"/"+sh[1];
+      st.buyers.forEach((b,i)=>{if(i<n-1){b.ap=s;b.src="pay"}});
+      save();buildRows();play("ok");toast("Her alıcıya eşit oran yazıldı: "+s);
+    }catch(e){play("err");toast(e.message,3000)}
+  };
+}
+setKM();setMode(st.mode);info();
+return{get:()=>({alan:st.alan,sp:st.sp,spd:st.spd}),set:o=>{["alan","sp","spd"].forEach(k=>{st[k]=o[k];q(`[data-k="${k}"]`).value=o[k]});save();buildRows();info()}};
+}
+
+/* ===== mod seçici ===== */
+const HH={s:makeApp($("s-root"),"hh-basit2",false),a:makeApp($("a-root"),"hh-state",true)};
+const SUB={s:"Tam hesap, yuvarlama hatası yok",a:"Tam kesirli, yuvarlamasız tapu payı hesabı"};
+function setMode(m,fromUser){
+  m=m==="a"?"a":"s";const old=document.documentElement.dataset.mode;
+  if(fromUser&&old&&old!==m){
+    const src=HH[old].get(),dst=HH[m].get();
+    if(!dst.alan&&!dst.sp&&!dst.spd&&(src.alan||src.sp||src.spd))HH[m].set(src);
+  }
+  document.documentElement.dataset.mode=m;
+  $("s-root").hidden=m!=="s";$("a-root").hidden=m!=="a";
+  $("sub").textContent=SUB[m];
+  document.querySelectorAll(".mt button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===m)));
+  document.title="Hisseli Satış Hesaplama Aracı · "+(m==="a"?"Gelişmiş":"Basit");
+  try{history.replaceState(null,"",m==="a"?"#gelismis":location.pathname+location.search)}catch(e){}
+  if(fromUser){guideHide();play("click")}
+}
+document.querySelectorAll(".mt button").forEach(b=>b.onclick=()=>setMode(b.dataset.m,true));
+setMode(location.hash==="#gelismis"?"a":"s");
+</script>
+</body>
+</html>
