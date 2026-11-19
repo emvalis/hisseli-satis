@@ -370,15 +370,15 @@ function guideOpen(){clearTimeout(gtm);gfab.classList.remove("on");gov.classList
 function guideClose(){if(!gov.classList.contains("on"))return;gov.classList.remove("on");clearTimeout(gtm);gtm=setTimeout(()=>gfab.classList.add("on"),380);play("click")}
 function guideHide(){clearTimeout(gtm);gov.classList.remove("on");gfab.classList.remove("on")}
 const BEAD=`<svg viewBox="0 0 28 28" width="28" height="28" aria-hidden="true"><g stroke="#127884" stroke-width="1" stroke-linejoin="round" fill="#35c3d0"><rect x="8" y="2" width="9" height="9"/><rect x="4.5" y="7" width="9" height="9"/><rect x="1" y="12" width="9" height="9"/></g><path d="M23 3V12" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M19 11L23 16L27 11Z" fill="currentColor"/><rect x="20" y="20" width="6.5" height="6.5" fill="#d11f1f" stroke="#7a0f0f" stroke-width="1"/></svg>`;
-const gstep=(n,t,v)=>`<li class="gs gc${n}" style="--i:${n-1}"><span class="gn">${n}</span><span class="gt">${t}</span>${v?`<button class="chip" data-gc="${v}" title="Kopyala">${grp(v)} ⧉</button>`:""}</li>`;
+const gstep=(n,t,v)=>`<li class="gs gc${n}" style="--i:${n-1}"><span class="gn">${n}</span><span class="gt">${t}</span>${v?`<button class="chip" data-gc="${v}" title="Kopyala">${v} ⧉</button>`:""}</li>`;
 function guideShow(keep,x,y){
   const px=keep?x:"1",py=keep?y:"1";
   $("gttl").textContent=keep?"Satıcıda hisse kalıyor: Çıkartma yöntemi":"Satıcıda hisse kalmıyor: Oran yöntemi";
   $("gsub").textContent=keep?"Takbis programında önce satıcının hissesinden satılacak kısmı çıkartın.":"Satıcının tüm hissesi devredildiği için oran 1/1 girilir.";
   $("gmock").innerHTML=
    `<div class="mk-box"><div class="mk-l">${keep?"Çıkartılacak Pay / Payda":"Çarpan Pay / Payda"}</div><div class="mk-r">`+
-   `<span class="mk-in nb gc2" style="--i:1" data-n="2"><span>${grp(px)}</span></span><i>/</i>`+
-   `<span class="mk-in nb gc3" style="--i:2" data-n="3"><span>${grp(py)}</span></span>`+
+   `<span class="mk-in nb gc2" style="--i:1" data-n="2"><span>${px}</span></span><i>/</i>`+
+   `<span class="mk-in nb gc3" style="--i:2" data-n="3"><span>${py}</span></span>`+
    `<span class="mk-bead nb gc4" style="--i:3" data-n="4">${BEAD}</span></div></div>`+
    `<div class="mk-rad"><div class="mk-t">Eksiltme</div>`+
    `<div class="mk-o${keep?"":" sel nb gc1"}" ${keep?"":'style="--i:0" data-n="1"'}>Oran</div>`+
@@ -389,7 +389,7 @@ function guideShow(keep,x,y){
    :gstep(1,"<b>Oran</b> seçeneği seçili kalsın")+gstep(2,"<b>Pay</b> kısmına şunu yazın","1")+gstep(3,"<b>Payda</b> kısmına şunu yazın","1")+gstep(4,"<b>Boncuk</b> simgesine tıklayın "+BEAD);
 
   $("gend").innerHTML=keep
-   ?`<b>${grp(px)} / ${grp(py)}</b>, satıcının hissesinden alıcılara verilecek toplam paydır. Bu işlemi yaptıktan sonra alıcıların paylarını <b>sonuç tablosundan</b> girin.`
+   ?`<b>${px} / ${py}</b>, satıcının hissesinden alıcılara verilecek toplam paydır. Bu işlemi yaptıktan sonra alıcıların paylarını <b>sonuç tablosundan</b> girin.`
    :`Satıcının hissesinin tamamı devredildiği için çarpan <b>1 / 1</b> olur. Bu işlemi yaptıktan sonra alıcıların paylarını <b>sonuç tablosundan</b> girin.`;
   clearTimeout(gtm);gtm=setTimeout(guideOpen,500);
 }
@@ -537,7 +537,7 @@ function calc(){
 }
 
 /* sonuç */
-const chip=(v,z)=>`<button class="chip" style="${z?"opacity:.5":""}" data-copy="${v}" title="Kopyalamak için tıkla">${grp(v)}</button>`;
+const chip=(v,z)=>`<button class="chip" style="${z?"opacity:.5":""}" data-copy="${v}" title="Kopyalamak için tıkla">${v}</button>`;
 const NT=`<span class="nt">Takbis'e girilmez</span>`;
 const HBOX=`<div class="hbx gc5"><div class="ht"><b>Takbis'e giriş:</b> Her alıcının <b>Pay</b> ve <b>Payda</b> değerini (pembe sütunlar) <b>Hisse Oranı</b> kutularına girin. <u>Çarpan Pay/Payda kutusuna yazmayın.</u> “Satıcıda kalan” satırı girilmez.</div><div class="hbm"><small>Hisse Oranı</small><div><span>Pay</span>/<span>Payda</span></div></div></div>`;
 
@@ -549,7 +549,7 @@ function render(r){
    .map(t=>`<div class="tile ${t[2]}"><small>${t[0]}</small><b>${t[1]}</b></div>`).join("")+`</div>`+
    (adv?`<div class="bar" aria-hidden="true">${all.map(x=>`<i title="${esc(x.name)}" style="flex-grow:${Number(x.s[0]*10n**12n/x.s[1])};background:${x.seller?"#e0a93e":hue(x.i)};animation-delay:${Math.min(x.i,20)*35}ms"></i>`).join("")}</div>`:"")+
    (good?"":`<p class="warn">Toplam satıcının payına eşit değil ya da bir değer 15 basamağı aşıyor. Sonucu kullanmayın.</p>`)+
-   `<p class="note">${r.exact?`Tüm paylar toplamı satıcının payına (${grp(r.S[0])} / ${grp(r.S[1])}) tam eşittir. `:""}`+
+   `<p class="note">${r.exact?`Tüm paylar toplamı satıcının payına (${r.S[0]} / ${r.S[1]}) tam eşittir. `:""}`+
    (r.adjusted?`15 basamak sınırı için ince ayar yapıldı (ortak payda ${grp(r.D)}); her pay istenen alandan en fazla ${toDec(div(r.A,[r.D,1n]),10)} m² sapar. `:(adv?"Tam kesirler 15 basamağa sığdığı için ayar yapılmadı, fark yoktur. ":""))+
    `Pay veya paydaya dokununca o sayı kopyalanır.</p>`+HBOX+`<div class="wrap"><table><thead>`+
    (adv?`<tr class="gh"><th colspan="3"></th><th colspan="2" class="hb gc5">Hisse Oranı kutusuna ↓</th><th colspan="3"></th></tr><tr><th>#</th><th>Ad</th><th class="m">İstenen m²</th><th class="hc">Pay</th><th class="hc">Payda</th><th class="m">Gerçek m²</th><th class="m">Fark</th><th></th></tr>`
