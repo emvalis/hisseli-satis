@@ -747,6 +747,7 @@ function setMode(m,fromUser){
     if(!dst.alan&&!dst.sp&&!dst.spd&&(src.alan||src.sp||src.spd))HH[m].set(src);
   }
   document.documentElement.dataset.mode=m;
+   store("hh-mode",m);
   $("s-root").hidden=m!=="s";$("a-root").hidden=m!=="a";
   $("sub").textContent=SUB[m];
   document.querySelectorAll(".mt button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.m===m)));
@@ -755,7 +756,7 @@ function setMode(m,fromUser){
   if(fromUser){guideHide();play("click")}
 }
 document.querySelectorAll(".mt button").forEach(b=>b.onclick=()=>setMode(b.dataset.m,true));
-setMode(location.hash==="#gelismis"?"a":"s");
+setMode(location.hash==="#gelismis"?"a":(load("hh-mode")==="a"?"a":"s"));
 </script>
 </body>
 </html>
