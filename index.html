@@ -247,11 +247,32 @@ th.hc,td.hc{background:rgba(219,39,119,.06)}
 .row.sellrow .no{background:var(--wabg);color:var(--wa)}
 .live.sl{background:var(--wabg);color:var(--wa);border-color:transparent}
 .live.sl small{font-weight:500;opacity:.8}
-.tools .rst{height:38px;padding:0 14px;border-radius:12px;font-size:13px;background:var(--card);display:inline-flex;align-items:center;gap:6px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.rst.rh{margin-left:auto;height:34px;padding:0 12px;border-radius:11px;font-size:13px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .botr{max-width:1100px;margin:0 auto;padding:0 22px 8px;display:flex;justify-content:center}
 .botr .rst{width:100%;max-width:420px}
-@media (max-width:640px){.tools .rst .lb{display:none}.tools .rst{width:38px;padding:0;justify-content:center}.tools .rst.armed .lb{display:inline}.tools .rst.armed{width:auto;padding:0 12px}}
+@media (max-width:480px){.rst.rh .lb{display:none}.rst.rh{width:34px;padding:0;justify-content:center}.rst.rh.armed{width:auto;padding:0 10px}}
 @media (max-width:560px){.row .sl{grid-column:2;grid-row:1}}
+
+/* alt buton satırı: ortalı ve belirgin sıfırla */
+.act-c{justify-content:center;gap:12px;margin:8px 0 22px}
+.rst-b{display:inline-flex;align-items:center;gap:7px;padding:14px 24px;font-size:15px;font-weight:650;color:var(--er);border:1.5px solid var(--er);background:var(--erbg);border-radius:14px}
+.rst-b span{font-size:17px;line-height:1}
+.rst-b:hover{background:var(--er);color:#fff;border-color:var(--er);transform:translateY(-2px);box-shadow:0 10px 22px -10px var(--er)}
+:root[data-theme="dark"] .rst-b:hover{color:#2a0b0a}
+.rst-b:active{transform:scale(.96)}
+.rst-b.armed{background:var(--er);color:#fff;border-color:var(--er)}
+@media (max-width:420px){.act-c .pri,.act-c .rst-b{flex:1 1 100%;justify-content:center}}
+
+/* sıfırla: animasyonlu uzama */
+.rst-b .rl,.rst-b .rc{display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:middle;transition:max-width .45s cubic-bezier(.3,1.1,.4,1),opacity .3s}
+.rst-b .rl{max-width:120px;opacity:1}
+.rst-b .rc{max-width:0;opacity:0}
+.rst-b .ri{transition:transform .45s cubic-bezier(.3,1.1,.4,1)}
+.rst-b.armed{gap:7px}
+.rst-b.armed .rl{max-width:0;opacity:0}
+.rst-b.armed .rc{max-width:260px;opacity:1}
+.rst-b.armed .ri{transform:rotate(-360deg)}
+.rst-b{transition:background .25s,color .25s,border-color .25s,transform .2s,box-shadow .25s}
 
 </style>
 </head>
@@ -261,12 +282,12 @@ th.hc,td.hc{background:rgba(219,39,119,.06)}
  <div class="tools">
   <div class="mt" role="group" aria-label="Mod seçimi"><button data-m="s" aria-pressed="true">Basit</button><button data-m="a" aria-pressed="false">Gelişmiş</button></div>
   <a class="lnk" href="https://emvalis.github.io/"  rel="noopener" title="Anasayfa"><span>🏠</span><span class="lb">Anasayfa</span></a><a class="lnk" href="https://emvalis.github.io/geri-bildirim/" target="_blank" rel="noopener" title="Hata / geri bildirim"><span>💬</span><span class="lb">Geri bildirim</span></a>
-  <button class="rst" id="rstTop" title="Tüm girdileri sıfırla"><span>↺</span><span class="lb">Sıfırla</span></button><button class="ib" id="snd" title="Sesi aç/kapat" aria-label="Ses">🔊</button><button class="ib" id="thm" title="Açık/koyu tema" aria-label="Tema">🌙</button>
+  <button class="ib" id="snd" title="Sesi aç/kapat" aria-label="Ses">🔊</button><button class="ib" id="thm" title="Açık/koyu tema" aria-label="Tema">🌙</button>
  </div>
 </header>
 <div id="s-root" class="simple"></div>
 <div id="a-root" class="adv" hidden></div>
-<div class="botr"><button class="rst" id="rstBot">↺ Tüm girdileri sıfırla</button></div>
+
 <footer class="foot"><span><b><i>Emvalis</i></b> tarafından geliştirilmiştir · © 2026</span><nav><a href="https://emvalis.github.io/" target="_blank" rel="noopener">Anasayfa</a><a href="https://emvalis.github.io/geri-bildirim/" target="_blank" rel="noopener">Hata bildir / Geri bildirim</a></nav></footer>
 <div id="toast" role="status"></div>
 <div class="gov" id="gov" role="dialog" aria-modal="true" aria-labelledby="gttl">
@@ -434,7 +455,7 @@ const kset=v=>{st[kfld(st.kalMode)]=v;st.kalSrc=st.kalMode};
 const hasKeep=()=>adv?st.kal:!!st.kalM.trim();
 
 root.innerHTML=`<main>
-<section class="card"><h2><span class="st">1</span>Taşınmaz ve satıcı</h2>
+<section class="card"><h2><span class="st">1</span>Taşınmaz ve satıcı<button class="rst rh" data-r="rstH" title="Tüm girdileri sıfırla"><span>↺</span><span class="lb">Sıfırla</span></button></h2>
  <div class="g2">
   <div><label>Taşınmaz alanı (m²)</label><input type="text" data-k="alan" inputmode="decimal" autocomplete="off" placeholder="${adv?"Tapudaki yüzölçümü, örn. 5000, 5.000 veya 1250,75":"Tapudaki taşınmaz yüzölçümü"}"></div>
   <div><label>Satıcının payı${adv?" (pay / payda)":""}</label><div class="pp"><input type="text" data-k="sp" inputmode="numeric" autocomplete="off" placeholder="Pay" aria-label="Pay"><span>/</span><input type="text" data-k="spd" inputmode="numeric" autocomplete="off" placeholder="Payda" aria-label="Payda"></div></div>
@@ -454,7 +475,7 @@ root.innerHTML=`<main>
  <div data-r="rows"></div>
  <div class="act" style="margin:14px 0 0"><button class="sec" data-r="add">+ Alıcı ekle</button>${adv?`<button class="sec" data-r="eq" hidden title="Satılacak hisseyi tüm alıcılara eşit böler">⚖ Eşit böl</button>`:""}<span class="fd" data-r="sum"></span></div>
 </section>
-<div class="act"><button class="pri" data-r="go">Hesapla</button><button class="rst" data-r="rst">↺ Sıfırla</button></div>
+<div class="act act-c"><button class="pri" data-r="go">Hesapla</button><button class="rst rst-b" data-r="rst"><span class="ri">↺</span><span class="rl">Sıfırla</span><span class="rc">Onaylamak için tekrar dokunun</span></button></div>
 <div data-r="out" aria-live="polite"></div></main>`;
 const R=n=>q(`[data-r="${n}"]`);
 
@@ -699,8 +720,8 @@ R("add").onclick=()=>{
 let rt;
 R("rst").onclick=()=>{
   const b=R("rst");
-  if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="⚠ Tüm veriler silinecek, onaylamak için tekrar dokunun";play("err");clearTimeout(rt);rt=setTimeout(()=>{b.classList.remove("armed");b.textContent="↺ Sıfırla"},4000);return}
-  clearTimeout(rt);b.classList.remove("armed");b.textContent="↺ Sıfırla";
+  if(!b.classList.contains("armed")){b.classList.add("armed");play("err");clearTimeout(rt);rt=setTimeout(()=>b.classList.remove("armed"),4000);return}
+  clearTimeout(rt);b.classList.remove("armed");
   doReset();
 };
 function doReset(){
@@ -808,7 +829,7 @@ function bindReset(b){
   let t;const orig=b.innerHTML;
   b.onclick=()=>{
     if(!b.classList.contains("armed")){
-      b.classList.add("armed");b.textContent="⚠ Silinecek, onaylamak için tekrar dokunun";play("err");
+      b.classList.add("armed");b.textContent="⚠ Onaylamak için tekrar dokunun";play("err");
       clearTimeout(t);t=setTimeout(()=>{b.classList.remove("armed");b.innerHTML=orig},4000);return;
     }
     clearTimeout(t);b.classList.remove("armed");b.innerHTML=orig;
@@ -816,7 +837,7 @@ function bindReset(b){
     scrollTo({top:0,behavior:"smooth"});
   };
 }
-bindReset($("rstTop"));bindReset($("rstBot"));
+document.querySelectorAll('[data-r="rstH"]').forEach(bindReset);
 
 </script>
 </body>
