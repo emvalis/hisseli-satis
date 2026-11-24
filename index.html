@@ -242,6 +242,17 @@ tr.s td{background:var(--wabg)}
 th.hc,td.hc{background:rgba(219,39,119,.06)}
 .nt{margin-left:8px;font-size:11px;font-weight:700;color:var(--mu);background:var(--chip);border:1px solid var(--br);border-radius:999px;padding:2px 8px;white-space:nowrap}
 
+/* tek alıcı + sıfırla butonları */
+[data-single="1"] .kpw{display:none!important}
+.row.sellrow .no{background:var(--wabg);color:var(--wa)}
+.live.sl{background:var(--wabg);color:var(--wa);border-color:transparent}
+.live.sl small{font-weight:500;opacity:.8}
+.tools .rst{height:38px;padding:0 14px;border-radius:12px;font-size:13px;background:var(--card);display:inline-flex;align-items:center;gap:6px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.botr{max-width:1100px;margin:0 auto;padding:0 22px 8px;display:flex;justify-content:center}
+.botr .rst{width:100%;max-width:420px}
+@media (max-width:640px){.tools .rst .lb{display:none}.tools .rst{width:38px;padding:0;justify-content:center}.tools .rst.armed .lb{display:inline}.tools .rst.armed{width:auto;padding:0 12px}}
+@media (max-width:560px){.row .sl{grid-column:2;grid-row:1}}
+
 </style>
 </head>
 <body>
@@ -250,11 +261,12 @@ th.hc,td.hc{background:rgba(219,39,119,.06)}
  <div class="tools">
   <div class="mt" role="group" aria-label="Mod seçimi"><button data-m="s" aria-pressed="true">Basit</button><button data-m="a" aria-pressed="false">Gelişmiş</button></div>
   <a class="lnk" href="https://emvalis.github.io/"  rel="noopener" title="Anasayfa"><span>🏠</span><span class="lb">Anasayfa</span></a><a class="lnk" href="https://emvalis.github.io/geri-bildirim/" target="_blank" rel="noopener" title="Hata / geri bildirim"><span>💬</span><span class="lb">Geri bildirim</span></a>
-  <button class="ib" id="snd" title="Sesi aç/kapat" aria-label="Ses">🔊</button><button class="ib" id="thm" title="Açık/koyu tema" aria-label="Tema">🌙</button>
+  <button class="rst" id="rstTop" title="Tüm girdileri sıfırla"><span>↺</span><span class="lb">Sıfırla</span></button><button class="ib" id="snd" title="Sesi aç/kapat" aria-label="Ses">🔊</button><button class="ib" id="thm" title="Açık/koyu tema" aria-label="Tema">🌙</button>
  </div>
 </header>
 <div id="s-root" class="simple"></div>
 <div id="a-root" class="adv" hidden></div>
+<div class="botr"><button class="rst" id="rstBot">↺ Tüm girdileri sıfırla</button></div>
 <footer class="foot"><span><b><i>Emvalis</i></b> tarafından geliştirilmiştir · © 2026</span><nav><a href="https://emvalis.github.io/" target="_blank" rel="noopener">Anasayfa</a><a href="https://emvalis.github.io/geri-bildirim/" target="_blank" rel="noopener">Hata bildir / Geri bildirim</a></nav></footer>
 <div id="toast" role="status"></div>
 <div class="gov" id="gov" role="dialog" aria-modal="true" aria-labelledby="gttl">
@@ -352,9 +364,9 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"
 const PAL=["#7fc4b8","#e6a8c0","#8aaed6","#e8c58a","#a99ae0","#9ccf9a","#f0a58f","#6fb5d6"];
 const hue=i=>PAL[i%PAL.length];
 const S_=v=>typeof v==="string"?v:"";
-const HINT={s:"Her alıcıya vereceğiniz m² miktarını yazın. Son alıcıya yazmayın, kalanın tamamını o alır.",
- m2:"Her alıcı için almak istediği m² alanını yazın (192 veya 149,89 gibi; kesir yazılamaz). Son alıcıya m² yazılmaz: kalanın tamamını o alır. Girdiler bu tarayıcıda saklanır.",
- pay:"Her alıcı için satıcının hissesinden alacağı oranı yazın: 1/2 yarısı, 1/4 dörtte biri demektir, 0,25 de aynı anlama gelir. Son alıcıya oran yazılmaz. Girdiler bu tarayıcıda saklanır."};
+const HINT={s:"Her alıcıya vereceğiniz m² miktarını yazın. Son alıcıya yazmayın, kalanın tamamını o alır. Tek alıcı varsa yazdığınız miktar satılır, geri kalanı satıcıda kalır.",
+ m2:"Her alıcı için almak istediği m² alanını yazın (192 veya 149,89 gibi; kesir yazılamaz). Son alıcıya m² yazılmaz: kalanın tamamını o alır. Tek alıcı varsa yazdığınız m² satılır, geri kalanı satıcıda kalır. Girdiler bu tarayıcıda saklanır.",
+ pay:"Her alıcı için satıcının hissesinden alacağı oranı yazın: 1/2 yarısı, 1/4 dörtte biri demektir, 0,25 de aynı anlama gelir. Son alıcıya oran yazılmaz. Tek alıcı varsa yazdığınız oran satılır, geri kalanı satıcıda kalır. Girdiler bu tarayıcıda saklanır."};
 
 /* ===== tapu rehberi (popup + sağ alt buton) ===== */
 const gov=$("gov"),gfab=$("gfab");
@@ -406,7 +418,7 @@ function makeApp(root,key,adv){
 const q=s=>root.querySelector(s);
 const fld=m=>m==="pay"?"ap":"am",kfld=m=>m==="pay"?"kalP":"kalM";
 const mkB=()=>({n:"",am:"",ap:"",src:"m2"});
-const mkDef=()=>({ver:2,mode:"m2",kalMode:"m2",alan:"",sp:"",spd:"",kal:false,kalM:"",kalP:"",kalSrc:"m2",buyers:[mkB(),mkB()]});
+const mkDef=()=>({ver:2,mode:"m2",kalMode:"m2",alan:"",sp:"",spd:"",kal:false,kalM:"",kalP:"",kalSrc:"m2",buyers:[mkB()]});
 function sanitize(j){
   const d=mkDef();
   if(!j||typeof j!=="object"||!Array.isArray(j.buyers)||!j.buyers.length)return d;
@@ -428,11 +440,12 @@ root.innerHTML=`<main>
   <div><label>Satıcının payı${adv?" (pay / payda)":""}</label><div class="pp"><input type="text" data-k="sp" inputmode="numeric" autocomplete="off" placeholder="Pay" aria-label="Pay"><span>/</span><input type="text" data-k="spd" inputmode="numeric" autocomplete="off" placeholder="Payda" aria-label="Payda"></div></div>
  </div>
  ${adv?`<div class="info" data-r="info"></div>
- <div class="sw"><label class="tg"><input type="checkbox" data-r="kal"><span class="trk"></span>Satıcıda m² kalacak</label>
+ <div class="sw kpw"><label class="tg"><input type="checkbox" data-r="kal"><span class="trk"></span>Satıcıda m² kalacak</label>
   <input type="text" class="kv" data-r="kalv" autocomplete="off" hidden aria-label="Satıcıda kalacak miktar">
   <div class="seg2" data-r="kmode" hidden role="radiogroup" aria-label="Kalacak miktar türü"><button data-km="m2" role="radio">m²</button><button data-km="pay" role="radio">Hisse oranı</button></div></div>
-  <p class="hint kh" data-r="khint" hidden style="margin-top:12px"></p>`
- :`<div class="kp"><label>Satıcıda kalacak m² <small>(isteğe bağlı)</small></label><input type="text" data-r="kalv" inputmode="decimal" autocomplete="off" placeholder="Boş bırakırsanız hepsi satılır"></div>`}
+  <p class="hint kh kpw" data-r="khint" hidden style="margin-top:12px"></p>
+  <p class="hint kh" data-r="sn" hidden style="margin-top:12px"></p>`
+ :`<div class="kp kpw"><label>Satıcıda kalacak m² <small>(isteğe bağlı)</small></label><input type="text" data-r="kalv" inputmode="decimal" autocomplete="off" placeholder="Boş bırakırsanız hepsi satılır"></div><p class="hint kh" data-r="sn" hidden style="margin-top:18px"></p>`}
 </section>
 <section class="card"><h2><span class="st">2</span>Alıcılar</h2>
  ${adv?`<div class="cnt"><b>Alıcı sayısı</b><div class="step"><button data-r="minus" aria-label="Azalt">−</button><input type="number" data-r="n" min="1" max="5000" aria-label="Alıcı sayısı"><button data-r="plus" aria-label="Artır">+</button></div><span class="fd">En fazla 5000</span></div>
@@ -487,30 +500,44 @@ function keepVal(own){
   return k;
 }
 function inputs(){
-  const{A,S,own}=base(),keep=keepVal(own),sold=sub(own,keep);
+  const{A,S,own}=base(),n=st.buyers.length,single=n===1;
+  let keep=single?ZERO:keepVal(own),sold=single?own:sub(own,keep);
   if(sold[0]<=0n)throw new Error("Satıcıda kalacak alan, satıcının sahip olduğu alandan ("+toDec(own,4)+" m²) küçük olmalı");
-  const n=st.buyers.length,req=[],f=fld(st.mode),pm=st.mode==="pay";let sum=ZERO;
-  for(let i=0;i<n-1;i++){
+  const req=[],f=fld(st.mode),pm=st.mode==="pay";let sum=ZERO;
+  const cnt=single?n:n-1;
+  for(let i=0;i<cnt;i++){
     let v=P(st.buyers[i][f],(i+1)+". alıcının "+(pm?"hissesi":"m²"),false,!pm);
     if(pm){if(cmp(v,ONE)>0)throw new Error((i+1)+". alıcının oranı 1 değerinden büyük olamaz");v=mul(own,v)}
     if(v[0]<=0n)throw new Error((i+1)+". alıcı için "+(pm?"oran":"m²")+" sıfırdan büyük olmalı");
     req.push(v);sum=add(sum,v);
   }
+  const names=st.buyers.map((b,i)=>b.n.trim()||("Alıcı "+(i+1)));
+  if(single){
+    if(cmp(sum,own)>0)throw new Error("Alıcıya verilen alan ("+toDec(sum,4)+" m²) satıcının sahip olduğu alandan ("+toDec(own,4)+" m²) fazla olamaz");
+    return{A,S,keep:sub(own,sum),own,sold:sum,req,n,names,single:true};
+  }
   const rest=sub(sold,sum);
   if(rest[0]<=0n)throw new Error("Alıcı alanları toplamı ("+toDec(sum,4)+" m²) satılacak alana ("+toDec(sold,4)+" m²) eşit veya fazla; son alıcıya alan kalmıyor");
   req.push(rest);
-  return{A,S,keep,own,sold,req,n,names:st.buyers.map((b,i)=>b.n.trim()||("Alıcı "+(i+1)))};
+  return{A,S,keep,own,sold,req,n,names,single:false};
 }
 function live(){
   const el=R("live"),sm=R("sum");if(!el)return;
   try{
-    const r=inputs(),rest=r.req[r.n-1],f=div(rest,r.own);
+    const r=inputs();
     el.className="live";
+    if(r.single){
+      const f=div(r.keep,r.own);
+      el.textContent=toDec(r.keep,4)+" m²"+(adv&&st.mode==="pay"?" · "+f[0]+"/"+f[1]+" hisse":"")+" satıcıda kalıyor";
+      sm.textContent="Satılacak: "+toDec(r.sold,4)+" m² · Satıcıda kalan: "+toDec(r.keep,4)+" m² · 1 alıcı";
+      return;
+    }
+    const rest=r.req[r.n-1],f=div(rest,r.own);
     el.textContent="Kalan: "+(adv&&st.mode==="pay"?f[0]+"/"+f[1]+" hisse · ":"")+toDec(rest,4)+" m²";
     sm.textContent="Satılacak toplam: "+toDec(r.sold,4)+" m² · "+r.n+" alıcı";
   }catch(e){
-    const w=/girilmeli$/.test(e.message);
-    el.className=w?"live":"live bad";el.textContent=w?"Kalan: otomatik":e.message;sm.textContent=st.buyers.length+" alıcı";
+    const w=/girilmeli$/.test(e.message),one=st.buyers.length===1;
+    el.className=w?"live":"live bad";el.textContent=w?(one?"Satıcıda kalan: otomatik":"Kalan: otomatik"):e.message;sm.textContent=st.buyers.length+" alıcı";
   }
 }
 function calc(){
@@ -548,6 +575,7 @@ function render(r){
    [["Satıcının toplam m²",toDec(r.own,4),""],["Satılan m²",toDec(r.sold,4),""],["Satıcıda kalan m²",toDec(r.keep,4),showKeep?"k":""],["Doğrulama",good?"✔ Tam tutuyor":"✘ Hata var",good?"ok":"er"]]
    .map(t=>`<div class="tile ${t[2]}"><small>${t[0]}</small><b>${t[1]}</b></div>`).join("")+`</div>`+
    (adv?`<div class="bar" aria-hidden="true">${all.map(x=>`<i title="${esc(x.name)}" style="flex-grow:${Number(x.s[0]*10n**12n/x.s[1])};background:${x.seller?"#e0a93e":hue(x.i)};animation-delay:${Math.min(x.i,20)*35}ms"></i>`).join("")}</div>`:"")+
+   (showKeep?`<p class="hint kh">🏠 Satıcıda <b>${toDec(r.keep,4)} m²</b> kalıyor${r.single?" (otomatik hesaplandı)":""}.</p>`:"")+
    (good?"":`<p class="warn">Toplam satıcının payına eşit değil ya da bir değer 15 basamağı aşıyor. Sonucu kullanmayın.</p>`)+
    `<p class="note">${r.exact?`Tüm paylar toplamı satıcının payına (${r.S[0]} / ${r.S[1]}) tam eşittir. `:""}`+
    (r.adjusted?`15 basamak sınırı için ince ayar yapıldı (ortak payda ${grp(r.D)}); her pay istenen alandan en fazla ${toDec(div(r.A,[r.D,1n]),10)} m² sapar. `:(adv?"Tam kesirler 15 basamağa sığdığı için ayar yapılmadı, fark yoktur. ":""))+
@@ -583,7 +611,7 @@ function conv(s,to,own){
 function convAll(from,to){
   const own=ownA(),last=st.buyers.length-1;let lost=0;
   st.buyers.forEach((b,i)=>{
-    if(i===last||b.src===to)return;
+    if((i===last&&st.buyers.length>1)||b.src===to)return;
     const s=b[fld(from)];
     if(!s.trim()){b[fld(to)]="";return}
     const r=conv(s,to,own);
@@ -610,7 +638,7 @@ function buildRows(fresh){
   const box=R("rows"),n=st.buyers.length,m=st.mode,f=fld(m),own=adv?ownA():null;
   if(adv)R("n").value=n;box.innerHTML="";
   st.buyers.forEach((b,i)=>{
-    const last=i===n-1,d=document.createElement("div");
+    const last=i===n-1&&n>1,d=document.createElement("div");
     d.className="row"+(last?" last":"")+(i===fresh?" new":"");
     let amt;
     if(last)amt=`<div class="live" data-r="live">—</div>`;
@@ -624,11 +652,19 @@ function buildRows(fresh){
       }
       amt=`<input type="text" class="am" data-i="${i}" inputmode="${m==="pay"?"text":"decimal"}" placeholder="${esc(ph)}" value="${esc(b[f])}" autocomplete="off" aria-label="${i+1}. alıcı miktarı">`;
     }
-    d.innerHTML=`<span class="no">${i+1}</span><input type="text" class="nm" data-i="${i}" placeholder="Ad Soyad (isteğe bağlı)" value="${esc(b.n)}" autocomplete="off" aria-label="${i+1}. alıcı adı">${amt}<button class="rm" data-rm="${i}" title="Alıcıyı sil" aria-label="Alıcıyı sil"${n<(adv?2:3)?" disabled":""}>×</button>`;
+    d.innerHTML=`<span class="no">${i+1}</span><input type="text" class="nm" data-i="${i}" placeholder="Ad Soyad (isteğe bağlı)" value="${esc(b.n)}" autocomplete="off" aria-label="${i+1}. alıcı adı">${amt}<button class="rm" data-rm="${i}" title="Alıcıyı sil" aria-label="Alıcıyı sil"${n<2?" disabled":""}>×</button>`;
     box.appendChild(d);
     const a=d.querySelector(".am");if(a&&m==="m2"&&a.value.includes("/"))a.classList.add("bad");
   });
-  live();
+  if(n===1){
+    const s=document.createElement("div");s.className="row last sellrow";
+    s.innerHTML=`<span class="no">🏠</span><div class="live sl">Satıcıda kalan <small>(otomatik)</small></div><div class="live" data-r="live">—</div>`;
+    box.appendChild(s);
+  }
+  root.dataset.single=n===1?"1":"0";
+  const sn=R("sn");sn.hidden=n!==1;
+  sn.innerHTML="🏠 <b>Tek alıcı:</b> Alıcıya yazdığınız miktar satılır, <b>geri kalanı satıcıda kalır</b> ve otomatik hesaplanır. Bu yüzden “satıcıda kalacak” alanı gizlendi.";
+  live();info();
 }
 R("rows").addEventListener("input",e=>{
   const i=+e.target.dataset.i;if(isNaN(i)||!st.buyers[i])return;
@@ -638,18 +674,24 @@ R("rows").addEventListener("input",e=>{
   save();live();
 });
 R("rows").addEventListener("click",e=>{
-  const b=e.target.closest("[data-rm]");if(!b||st.buyers.length<(adv?2:3))return;
+  const b=e.target.closest("[data-rm]");if(!b||st.buyers.length<2)return;
   st.buyers.splice(+b.dataset.rm,1);save();buildRows();play("click");
 });
 function setN(v,fresh){
   v=Math.max(1,Math.min(5000,parseInt(v)||1));
-  while(st.buyers.length<v)st.buyers.splice(st.buyers.length-1,0,mkB());
-  while(st.buyers.length>v)st.buyers.splice(st.buyers.length-2,1);
+  while(st.buyers.length<v){
+    if(st.buyers.length===1)st.buyers.push(mkB());
+    else st.buyers.splice(st.buyers.length-1,0,mkB());
+  }
+  while(st.buyers.length>v){
+    if(st.buyers.length===2)st.buyers.pop();
+    else st.buyers.splice(st.buyers.length-2,1);
+  }
   save();buildRows(fresh);
 }
 R("add").onclick=()=>{
   if(st.buyers.length>=5000){toast("En fazla 5000 alıcı eklenebilir");return}
-  setN(st.buyers.length+1,st.buyers.length-1);play("click");
+  setN(st.buyers.length+1,st.buyers.length===1?1:st.buyers.length-1);play("click");
   const a=root.querySelectorAll(".row .nm");if(a.length>1)a[a.length-2].focus();
 };
 
@@ -659,11 +701,14 @@ R("rst").onclick=()=>{
   const b=R("rst");
   if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="⚠ Tüm veriler silinecek, onaylamak için tekrar dokunun";play("err");clearTimeout(rt);rt=setTimeout(()=>{b.classList.remove("armed");b.textContent="↺ Sıfırla"},4000);return}
   clearTimeout(rt);b.classList.remove("armed");b.textContent="↺ Sıfırla";
+  doReset();
+};
+function doReset(){
   st=mkDef();try{localStorage.removeItem(key)}catch(e){}
   ["alan","sp","spd"].forEach(k=>q(`[data-k="${k}"]`).value="");
   R("kalv").value="";
   R("out").innerHTML="";guideHide();setKM();setMode("m2");info();play("copy");toast("Tüm girdiler sıfırlandı");
-};
+}
 
 /* gelişmiş: mod, kalan, bilgi, eşit böl */
 function setMode(m){
@@ -696,7 +741,7 @@ function info(){
     const A=parse(st.alan);h+=ic("Taşınmaz alanı",gf(toDec(A,2))+" m²","c1");
     if(!String(st.sp).trim()||!String(st.spd).trim())throw 0;
     const own=mul(A,div(parse(st.sp,true),parse(st.spd,true)));h+=ic("Satıcının m²",gf(toDec(own,4))+" m²","c2");
-    if(st.kal&&kget().trim()){
+    if(st.kal&&kget().trim()&&st.buyers.length>1){
       const kv=parse(kget()),pay=st.kalMode==="pay",keep=pay?mul(own,kv):kv;
       if(pay?cmp(kv,ONE)<0:!kget().includes("/")){
         h+=ic("Satılacak m²",gf(toDec(sub(own,keep),4))+" m²","c3");
@@ -710,7 +755,7 @@ if(adv){
   R("kal").addEventListener("change",()=>{st.kal=R("kal").checked;save();setKM();live();info();play("click")});
   R("n").addEventListener("change",()=>setN(R("n").value));
   R("minus").onclick=()=>{setN(st.buyers.length-1);play("click")};
-  R("plus").onclick=()=>{setN(st.buyers.length+1,st.buyers.length-1);play("click")};
+  R("plus").onclick=()=>{setN(st.buyers.length+1,st.buyers.length===1?1:st.buyers.length-1);play("click")};
   root.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
     const nm=b.dataset.mode==="pay"?"pay":"m2";let lost=0;
     if(nm!==st.mode)lost=convAll(st.mode,nm);
@@ -734,7 +779,7 @@ if(adv){
   };
 }
 setKM();setMode(st.mode);info();
-return{get:()=>({alan:st.alan,sp:st.sp,spd:st.spd}),set:o=>{["alan","sp","spd"].forEach(k=>{st[k]=o[k];q(`[data-k="${k}"]`).value=o[k]});save();buildRows();info()}};
+return{reset:doReset,get:()=>({alan:st.alan,sp:st.sp,spd:st.spd}),set:o=>{["alan","sp","spd"].forEach(k=>{st[k]=o[k];q(`[data-k="${k}"]`).value=o[k]});save();buildRows();info()}};
 }
 
 /* ===== mod seçici ===== */
@@ -757,6 +802,22 @@ function setMode(m,fromUser){
 }
 document.querySelectorAll(".mt button").forEach(b=>b.onclick=()=>setMode(b.dataset.m,true));
 setMode(location.hash==="#gelismis"?"a":(load("hh-mode")==="a"?"a":"s"));
+
+/* üst ve alt sıfırla butonları (iki dokunuşlu onay) */
+function bindReset(b){
+  let t;const orig=b.innerHTML;
+  b.onclick=()=>{
+    if(!b.classList.contains("armed")){
+      b.classList.add("armed");b.textContent="⚠ Silinecek, onaylamak için tekrar dokunun";play("err");
+      clearTimeout(t);t=setTimeout(()=>{b.classList.remove("armed");b.innerHTML=orig},4000);return;
+    }
+    clearTimeout(t);b.classList.remove("armed");b.innerHTML=orig;
+    HH.s.reset();HH.a.reset();
+    scrollTo({top:0,behavior:"smooth"});
+  };
+}
+bindReset($("rstTop"));bindReset($("rstBot"));
+
 </script>
 </body>
 </html>
